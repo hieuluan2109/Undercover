@@ -107,7 +107,7 @@ export function RoleRevealScreen({ game, dispatch }) {
       <p className="muted">là</p>
       <p className={`role-reveal ${player.role}`}>{ROLE_LABEL[player.role]}</p>
       {isMrWhite ? (
-        <p className="muted">Mr. White được đoán từ của dân 1 lần. Đoán đúng là thắng ngay.</p>
+        <p className="muted">Mr. White được đoán từ của dân 1 lần bằng cách tự gõ vào máy. Đoán đúng là thắng ngay.</p>
       ) : null}
       {winner ? <p className="muted">Ván đã có kết quả.</p> : null}
 
@@ -120,38 +120,76 @@ export function RoleRevealScreen({ game, dispatch }) {
   )
 }
 
-// APP_FLOW 7.5: Mr. White nói to câu đoán, cả nhóm phán đúng/sai.
+// APP_FLOW 7.5: Mr. White tự gõ câu đoán, app tự so với từ của dân. Không ai
+// phải phán đúng/sai nên không lộ ai biết từ nào.
 export function MrWhiteGuessScreen({ game, dispatch }) {
-  const [pending, setPending] = useState(null) // null | true | false
+  const [guess, setGuess] = useState('')
+  const [confirming, setConfirming] = useState(false)
   const player = game.players[game.lastOut]
+  const canSubmit = guess.trim() !== ''
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (canSubmit) setConfirming(true)
+  }
 
   return (
     <section className="screen center">
       <p className="big-icon">🤔</p>
       <h1>{player.name}, hãy đoán từ của dân</h1>
-      <p className="muted">
-        Nói to câu đoán. Những ai biết từ của dân cùng quyết định đúng hay sai. Phải đúng từ mới thắng.
-      </p>
+      <p className="muted">Đưa máy cho {player.name}. Những người khác đừng nhìn màn hình.</p>
 
-      <div className="bottom-bar row">
-        <button className="btn danger big" onClick={() => setPending(false)}>
-          Đoán sai
-        </button>
-        <button className="btn success big" onClick={() => setPending(true)}>
-          Đoán đúng
-        </button>
-      </div>
+      <form className="guess-form" onSubmit={handleSubmit}>
+        <input
+          value={guess}
+          onChange={(e) => setGuess(e.target.value)}
+          placeholder="Nhập từ của dân"
+          aria-label="Câu đoán của Mr. White"
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck={false}
+          autoFocus
+        />
+        <p className="muted small">Chỉ được đoán 1 lần. Không phân biệt viết hoa, viết thường.</p>
+        <div className="bottom-bar">
+          <button type="submit" className="btn primary big" disabled={!canSubmit}>
+            Gửi câu đoán
+          </button>
+        </div>
+      </form>
 
-      {pending !== null ? (
+      {confirming ? (
         <ConfirmDialog
-          title={pending ? 'Mr. White đoán đúng?' : 'Mr. White đoán sai?'}
-          message={pending ? 'Mr. White sẽ thắng ngay.' : 'Mr. White bị loại, ván chơi tiếp tục.'}
-          confirmLabel="Xác nhận"
-          danger={!pending}
-          onCancel={() => setPending(null)}
-          onConfirm={() => dispatch({ type: 'mrWhiteGuess', correct: pending })}
+          title="Gửi câu đoán?"
+          message="Chỉ được đoán 1 lần, không sửa lại được."
+          confirmLabel="Gửi"
+          onCancel={() => setConfirming(false)}
+          onConfirm={() => dispatch({ type: 'mrWhiteGuess', guess })}
         />
       ) : null}
+    </section>
+  )
+}
+
+// Đoán sai: chỉ báo sai, không hiện câu đoán hay từ của dân.
+export function MrWhiteWrongScreen({ game, dispatch }) {
+  const player = game.players[game.lastOut]
+  const winner = checkWinner(game.players)
+
+  return (
+    <section className="screen center">
+      <p className="big-icon">❌</p>
+      <h1>Đoán sai!</h1>
+      <p className="muted">
+        {player.name} bị loại. {winner ? 'Ván đã có kết quả.' : 'Ván chơi tiếp tục.'}
+      </p>
+
+      <div className="bottom-bar">
+        <button className="btn primary big" onClick={() => dispatch({ type: 'afterMrWhiteWrong' })}>
+          {winner ? 'Xem kết quả' : `Sang vòng ${game.round + 1}`}
+        </button>
+      </div>
     </section>
   )
 }

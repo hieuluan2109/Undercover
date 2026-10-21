@@ -69,8 +69,8 @@ Mỗi vòng gồm 3 giai đoạn: **Mô tả → Thảo luận → Bỏ phiếu*
 - **Đoán đúng → Mr. White thắng ngay lập tức.**
 - Đoán sai → Mr. White bị loại, ván tiếp tục (hoặc kết thúc nếu đã đủ điều kiện thắng ở mục 4).
 
-> **[Luật nhóm] Cả nhóm quyết định câu đoán của Mr. White có đúng hay không.**
-> Mr. White nói (hoặc nhập) câu đoán, sau đó **cả nhóm cùng xác nhận** câu đó đúng hay sai. Không dùng máy tự so sánh. Vì vậy chuyện sai dấu, sai chính tả nhỏ hay dùng từ đồng nghĩa (vd: "ca phe", "cafe" so với "cà phê") đều do nhóm phán quyết.
+> **[Luật nhóm] App tự chấm câu đoán của Mr. White.**
+> Mr. White **tự gõ** câu đoán vào máy (người khác không nhìn), app so với từ của dân, **không phân biệt viết hoa/viết thường** và bỏ khoảng trắng thừa. Dấu vẫn phải đúng (vd: "ca phe" hay "cafe" khác "cà phê"). Đoán sai thì app chỉ báo sai, không hiện câu đoán hay từ của dân. Cách này tránh việc cả nhóm phán đúng sai làm lộ ai biết từ nào.
 
 ## 4. Điều kiện thắng
 
@@ -101,7 +101,7 @@ Luật chính thức không nói rõ những điểm dưới đây, nên nhóm t
 2. **Mặc định Mr. White không nói đầu tiên**, có thể bật trong Cài đặt (mục 3.1).
 3. **Hòa phiếu:** oẳn tù tì (mục 3.3).
 4. **Công khai vai** của người bị loại ngay sau khi bỏ phiếu (mục 3.3).
-5. **Câu đoán của Mr. White:** cả nhóm quyết định đúng hay sai (mục 3.4).
+5. **Câu đoán của Mr. White:** tự gõ vào máy, app tự chấm, không phân biệt hoa thường (mục 3.4).
 6. **Giới hạn thời gian / số vòng:** chưa áp dụng ở bản này.
 
 ## Nằm ngoài phạm vi (không dùng)

@@ -221,7 +221,8 @@ p {
   margin-top: 0.75rem;
 }
 
-.add-form input {
+.add-form input,
+.guess-form input {
   flex: 1;
   min-width: 0;
   font: inherit;
@@ -584,4 +585,20 @@ p {
 
 .dialog .name-grid {
   margin: 0;
+}
+
+/* ---------- Mr. White guess ---------- */
+
+.guess-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 22rem;
+  margin-top: 1rem;
+}
+
+.guess-form input {
+  flex: none;
+  text-align: center;
 }

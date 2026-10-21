@@ -8,6 +8,7 @@ import { PlayersScreen, RolesScreen } from './screens/SetupScreens.jsx'
 import {
   EndScreen,
   MrWhiteGuessScreen,
+  MrWhiteWrongScreen,
   PickOutScreen,
   RoleRevealScreen,
   RoundScreen,
@@ -36,6 +37,7 @@ const PHASE_TITLE = {
   pickOut: 'Đang chơi',
   roleReveal: 'Đang chơi',
   mrWhiteGuess: 'Đang chơi',
+  mrWhiteWrong: 'Đang chơi',
   ended: 'Kết thúc',
 }
 
@@ -69,6 +71,8 @@ function GameView({ game, dispatch, settings, onReplay, onNewGame }) {
       return <RoleRevealScreen game={game} dispatch={dispatch} />
     case 'mrWhiteGuess':
       return <MrWhiteGuessScreen game={game} dispatch={dispatch} />
+    case 'mrWhiteWrong':
+      return <MrWhiteWrongScreen game={game} dispatch={dispatch} />
     case 'ended':
       return <EndScreen game={game} onReplay={onReplay} onNewGame={onNewGame} />
     default:

@@ -184,9 +184,9 @@ Việc **mô tả, thảo luận, bỏ phiếu và oẳn tù tì** đều diễn
       ▼
 [Công khai vai]           ← "Minh là Undercover"
       │
-      ├─ Nếu là Mr. White → [Mr. White đoán từ]
+      ├─ Nếu là Mr. White → [Mr. White đoán từ]  ← tự gõ, app tự chấm
       │                         ├─ Đúng → Mr. White thắng → [Kết thúc]
-      │                         └─ Sai  → kiểm tra thắng/thua
+      │                         └─ Sai  → [Đoán sai!] → kiểm tra thắng/thua
       ▼
 (Kiểm tra thắng/thua)
       ├─ Có phe thắng → [Kết thúc]
@@ -218,11 +218,12 @@ Việc **mô tả, thảo luận, bỏ phiếu và oẳn tù tì** đều diễn
 - Nếu là Mr. White → sang mục 7.5. Nếu không → kiểm tra thắng/thua (mục 7.6).
 
 ### 7.5. Mr. White đoán từ
-1. Màn hình: **"Mr. White, hãy đoán từ của dân"**. Mr. White **nói to** câu đoán.
-2. Cả nhóm quyết định đúng hay sai. Host bấm **"Đoán đúng"** hoặc **"Đoán sai"**.
-   - App **không hiện** từ của dân ở bước này. Mr. White phải đoán **đúng từ** mới thắng.
-3. **Đúng** → Mr. White thắng ngay → màn hình kết thúc.
-4. **Sai** → Mr. White bị loại như bình thường → kiểm tra thắng/thua (mục 7.6).
+1. Màn hình: **"[Tên], hãy đoán từ của dân"**. Host đưa máy cho Mr. White, những người khác không nhìn màn hình.
+2. Mr. White **tự gõ** câu đoán vào ô nhập rồi bấm **"Gửi câu đoán"** (có hộp xác nhận vì chỉ được đoán 1 lần).
+3. **App tự so** câu đoán với từ của dân: bỏ khoảng trắng thừa, **không phân biệt viết hoa/viết thường** (chuẩn hóa Unicode để chữ có dấu từ các bộ gõ khác nhau vẫn khớp). Dấu vẫn phải đúng: "ca phe" khác "cà phê".
+   - Không ai phải phán đúng/sai, nên không lộ ai biết từ nào (tránh lộ vai Undercover).
+4. **Đúng** → Mr. White thắng ngay → màn hình kết thúc.
+5. **Sai** → màn hình **"Đoán sai!"**. Chỉ báo sai, **không hiện** câu đoán và từ của dân. Mr. White bị loại như bình thường → kiểm tra thắng/thua (mục 7.6).
 
 ### 7.6. Kiểm tra thắng/thua (sau mỗi lần loại người)
 

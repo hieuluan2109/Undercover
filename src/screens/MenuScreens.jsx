@@ -109,7 +109,7 @@ const rulesContent = (
         <strong>Kẻ xâm nhập</strong> thắng khi chỉ còn 1 Dân thường.
       </li>
       <li>
-        <strong>Mr. White</strong> bị loại được đoán từ của dân 1 lần, đúng là thắng ngay. Cả nhóm phán đúng sai.
+        <strong>Mr. White</strong> bị loại được đoán từ của dân 1 lần, đúng là thắng ngay. Mr. White tự gõ câu đoán, app tự chấm (không phân biệt hoa thường).
       </li>
     </ul>
   </div>

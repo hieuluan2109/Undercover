@@ -159,6 +159,16 @@ export function isAlive(player) {
   return player.outRound === null
 }
 
+// So câu đoán của Mr. White với từ của dân: bỏ khoảng trắng thừa, không phân
+// biệt hoa thường. NFC để chữ có dấu gõ từ các bộ gõ khác nhau vẫn khớp.
+function normalizeGuess(text) {
+  return normalizeName(text.normalize('NFC')).toLocaleLowerCase('vi')
+}
+
+export function isCorrectGuess(guess, word) {
+  return normalizeGuess(guess) === normalizeGuess(word)
+}
+
 // Thứ tự nói của vòng hiện tại: bắt đầu từ người nói đầu, bỏ người đã bị loại.
 export function speakingOrder(game) {
   const start = game.order.indexOf(game.firstSpeaker)
@@ -278,8 +288,16 @@ export function gameReducer(game, action) {
       return finishElimination(game)
     }
 
-    case 'mrWhiteGuess':
-      if (action.correct) return { ...game, phase: 'ended', winner: 'mrWhite' }
+    // APP_FLOW 7.5: app tự so, chỉ báo đúng/sai, không lộ từ hay câu đoán.
+    case 'mrWhiteGuess': {
+      if (game.phase !== 'mrWhiteGuess' || !normalizeName(action.guess)) return game
+      if (isCorrectGuess(action.guess, game.words.civilian)) {
+        return { ...game, phase: 'ended', winner: 'mrWhite' }
+      }
+      return { ...game, phase: 'mrWhiteWrong' }
+    }
+
+    case 'afterMrWhiteWrong':
       return finishElimination(game)
 
     default:
