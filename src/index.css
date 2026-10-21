@@ -262,6 +262,20 @@ p {
   border-radius: var(--radius);
 }
 
+.player-list li span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.player-actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.4rem;
+  margin-left: 0.5rem;
+}
+
 .player-list li span::before {
   content: counter(player) '. ';
   color: var(--muted);

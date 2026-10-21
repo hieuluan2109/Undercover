@@ -61,13 +61,31 @@ export function PlayersScreen({ names, dispatch }) {
         {names.map((name, i) => (
           <li key={name}>
             <span>{name}</span>
-            <button
-              className="icon-btn"
-              aria-label={`Xóa ${name}`}
-              onClick={() => dispatch({ type: 'removeName', index: i })}
-            >
-              ✕
-            </button>
+            <div className="player-actions">
+              <button
+                className="icon-btn"
+                aria-label={`Chuyển ${name} lên trên`}
+                disabled={i === 0}
+                onClick={() => dispatch({ type: 'moveName', index: i, delta: -1 })}
+              >
+                ↑
+              </button>
+              <button
+                className="icon-btn"
+                aria-label={`Chuyển ${name} xuống dưới`}
+                disabled={i === count - 1}
+                onClick={() => dispatch({ type: 'moveName', index: i, delta: 1 })}
+              >
+                ↓
+              </button>
+              <button
+                className="icon-btn"
+                aria-label={`Xóa ${name}`}
+                onClick={() => dispatch({ type: 'removeName', index: i })}
+              >
+                ✕
+              </button>
+            </div>
           </li>
         ))}
       </ol>
