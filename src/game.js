@@ -228,6 +228,16 @@ export function gameReducer(game, action) {
     case 'removeName':
       return { ...game, names: game.names.filter((_, i) => i !== action.index) }
 
+    case 'moveName': {
+      // Đổi chỗ với người ngay trên (delta = -1) hoặc ngay dưới (delta = 1).
+      const from = action.index
+      const to = from + action.delta
+      if (to < 0 || to >= game.names.length) return game
+      const names = [...game.names]
+      ;[names[from], names[to]] = [names[to], names[from]]
+      return { ...game, names }
+    }
+
     case 'toRoles': {
       // Chưa chọn, hoặc số người đổi làm số vai cũ không còn hợp lệ → gợi ý lại.
       const total = game.names.length
