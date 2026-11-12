@@ -2,12 +2,12 @@ import { useEffect, useReducer, useState } from 'react'
 import { ConfirmDialog, Dialog } from './components/Dialog.jsx'
 import {
   DEFAULT_SETTINGS,
-  HOST_TOKEN,
   canEndNow,
   canUndo,
   gameReducer,
   nextUndoLabel,
   pickPair,
+  usesHostDevice,
   waitingNames,
 } from './game.js'
 import { useWakeLock } from './online/useWakeLock.js'
@@ -59,8 +59,9 @@ const PHASE_TITLE = {
 // Chơi nhiều máy: Mr. White đoán trên máy mình, trừ khi host chọn cho đoán trên máy host.
 function OnlineGuessGate({ game, dispatch, room }) {
   const [here, setHere] = useState(false)
-  const isHost = game.online.tokens[game.players[game.lastOut].name] === HOST_TOKEN
-  if (isHost || here) return <MrWhiteGuessScreen game={game} dispatch={dispatch} />
+  // Host hoặc người host thêm bằng tay thì đoán ngay trên máy host.
+  const hereByDefault = usesHostDevice(game, game.players[game.lastOut].name)
+  if (hereByDefault || here) return <MrWhiteGuessScreen game={game} dispatch={dispatch} />
   return <OnlineWaitGuessScreen game={game} room={room} onGuessHere={() => setHere(true)} />
 }
 

@@ -1,10 +1,60 @@
 // Màn hình chính, Cài đặt (APP_FLOW 8) và tóm tắt luật chơi.
 
 import { useState } from 'react'
-import { ConfirmDialog } from '../components/Dialog.jsx'
+import { ConfirmDialog, Dialog } from '../components/Dialog.jsx'
 import { pairStats, resetPlayedPairs } from '../game.js'
+import { ROOM_CODE_LENGTH, joinUrl, normalizeRoomCode } from '../online/protocol.js'
+
+// Chơi nhiều máy: tạo phòng (làm host) hoặc gõ mã phòng để vào, cho máy nào
+// không quét được QR.
+function OnlineDialog({ onCreate, onClose }) {
+  const [code, setCode] = useState('')
+  const clean = normalizeRoomCode(code)
+
+  return (
+    <Dialog onClose={onClose}>
+      <h2>Chơi nhiều máy</h2>
+      <div className="menu-list">
+        <button className="btn primary" onClick={onCreate}>
+          ➕ Tạo phòng mới (làm host)
+        </button>
+      </div>
+      <h3>Hoặc vào phòng bằng mã</h3>
+      <form
+        className="add-form"
+        onSubmit={(e) => {
+          e.preventDefault()
+          if (clean.length === ROOM_CODE_LENGTH) location.href = joinUrl(clean)
+        }}
+      >
+        <input
+          value={code}
+          onChange={(e) => setCode(e.target.value.toUpperCase())}
+          placeholder="Mã phòng, vd: GPLYS"
+          aria-label="Mã phòng"
+          maxLength={ROOM_CODE_LENGTH + 2}
+          autoCapitalize="characters"
+          autoComplete="off"
+          autoCorrect="off"
+          spellCheck={false}
+          enterKeyHint="go"
+        />
+        <button className="btn primary" type="submit" disabled={clean.length !== ROOM_CODE_LENGTH}>
+          Vào
+        </button>
+      </form>
+      <div className="menu-list">
+        <button className="btn ghost" onClick={onClose}>
+          Đóng
+        </button>
+      </div>
+    </Dialog>
+  )
+}
 
 export function HomeScreen({ hasGame, onContinue, onNewGame, onOnline, onGroups, onSettings, onRules }) {
+  const [onlineOpen, setOnlineOpen] = useState(false)
+
   return (
     <section className="screen center">
       <p className="big-icon">🕵️</p>
@@ -20,7 +70,7 @@ export function HomeScreen({ hasGame, onContinue, onNewGame, onOnline, onGroups,
         <button className={hasGame ? 'btn big' : 'btn primary big'} onClick={onNewGame}>
           Tạo ván mới
         </button>
-        <button className="btn" onClick={onOnline}>
+        <button className="btn" onClick={() => setOnlineOpen(true)}>
           📱 Chơi nhiều máy (thử nghiệm)
         </button>
         <button className="btn" onClick={onGroups}>
@@ -33,6 +83,16 @@ export function HomeScreen({ hasGame, onContinue, onNewGame, onOnline, onGroups,
           📖 Luật chơi
         </button>
       </div>
+
+      {onlineOpen ? (
+        <OnlineDialog
+          onClose={() => setOnlineOpen(false)}
+          onCreate={() => {
+            setOnlineOpen(false)
+            onOnline()
+          }}
+        />
+      ) : null}
     </section>
   )
 }
