@@ -5,6 +5,8 @@ import { PlayerStatus } from '../components/PlayerStatus.jsx'
 import { ROLE, ROLE_LABEL, normalizeName } from '../game.js'
 import { MAX_NAME_LENGTH } from '../groups.js'
 import { useClientRoom } from '../online/useClientRoom.js'
+import { useWakeLock } from '../online/useWakeLock.js'
+import { KEYS, load, save } from '../storage.js'
 import { EndScreen } from './RoundScreens.jsx'
 
 const STATUS_LABEL = {
@@ -15,12 +17,15 @@ const STATUS_LABEL = {
 }
 
 function JoinScreen({ view, error, send }) {
-  const [name, setName] = useState('')
+  // Điền sẵn tên đã dùng lần trước trên máy này.
+  const [name, setName] = useState(() => load(KEYS.lastName, ''))
   const started = view.phase !== 'players' && view.phase !== 'roles'
 
   const submit = (e) => {
     e.preventDefault()
-    if (normalizeName(name)) send({ type: 'join', name })
+    if (!normalizeName(name)) return
+    save(KEYS.lastName, normalizeName(name))
+    send({ type: 'join', name })
   }
 
   return (
@@ -28,7 +33,7 @@ function JoinScreen({ view, error, send }) {
       <h1>Vào phòng {view.room}</h1>
       <p className="muted">
         {started
-          ? 'Ván đã bắt đầu. Nếu bạn đang chơi mà lỡ đóng trang, nhập đúng tên cũ để vào lại.'
+          ? 'Ván đang diễn ra: nhập tên để vào chờ ván sau. Nếu bạn đang chơi mà lỡ đóng trang, nhập đúng tên cũ để vào lại.'
           : 'Nhập tên của bạn để vào phòng.'}
       </p>
       <form className="add-form" onSubmit={submit}>
@@ -63,6 +68,17 @@ function LobbyScreen({ view }) {
           <li key={n}>{n === view.myName ? <strong>{n} (bạn)</strong> : n}</li>
         ))}
       </ol>
+    </section>
+  )
+}
+
+function WaitingScreen({ view }) {
+  return (
+    <section className="screen">
+      <h1>Chào {view.myName}!</h1>
+      <p className="muted">Ván đang diễn ra. Bạn sẽ được thêm vào ván sau khi host bấm "Chơi lại".</p>
+      <h3>Đang chơi ({view.names.length})</h3>
+      <p className="muted">{view.names.join(', ')}</p>
     </section>
   )
 }
@@ -193,6 +209,7 @@ function GuessView({ view, send }) {
 }
 
 function GameView({ view, send }) {
+  if (view.waiting) return <WaitingScreen view={view} />
   switch (view.phase) {
     case 'players':
     case 'roles':
@@ -229,6 +246,7 @@ function GameView({ view, send }) {
 // App trên máy người chơi, mở bằng link ?room=MÃ từ mã QR của host.
 export function ClientApp({ room }) {
   const { view, status, joinError, send } = useClientRoom(room)
+  useWakeLock(true)
   const [confirmLeave, setConfirmLeave] = useState(false)
   const notice = STATUS_LABEL[status]
 
