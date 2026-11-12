@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Dialog } from '../components/Dialog.jsx'
 import { NameListEditor } from '../components/NameListEditor.jsx'
-import { MAX_PLAYERS, MIN_PLAYERS, civilianCount, normalizeName, validateCounts } from '../game.js'
+import { MAX_PLAYERS, MIN_PLAYERS, civilianCount, normalizeName, pairStats, validateCounts } from '../game.js'
 import { MAX_NAME_LENGTH, defaultGroupName, newGroupId } from '../groups.js'
 
 function PickGroupDialog({ groups, onPick, onClose }) {
@@ -167,12 +167,13 @@ function Stepper({ label, hint, value, onChange, canIncrease }) {
   )
 }
 
-// APP_FLOW 3.3: chọn số vai và chế độ chọn cặp từ.
+// APP_FLOW 3.3: chọn số vai.
 export function RolesScreen({ game, dispatch, onStart }) {
   const total = game.names.length
   const { counts } = game
   const civilians = civilianCount(total, counts)
   const problem = validateCounts(total, counts)
+  const { remaining, total: totalPairs } = pairStats()
 
   const setCount = (role) => (value) => dispatch({ type: 'setCount', role, value })
 
@@ -205,25 +206,10 @@ export function RolesScreen({ game, dispatch, onStart }) {
 
       {problem ? <p className="error">{problem}</p> : null}
 
-      <h3>Chọn cặp từ</h3>
-      <div className="segmented">
-        <button
-          className={game.pairMode === 'random' ? 'active' : ''}
-          onClick={() => dispatch({ type: 'setPairMode', mode: 'random' })}
-        >
-          Ngẫu nhiên
-        </button>
-        <button
-          className={game.pairMode === 'sequential' ? 'active' : ''}
-          onClick={() => dispatch({ type: 'setPairMode', mode: 'sequential' })}
-        >
-          Lần lượt
-        </button>
-      </div>
-      <p className="muted small">
-        {game.pairMode === 'random'
-          ? 'Mỗi ván bốc ngẫu nhiên 1 cặp (có thể trùng cặp đã chơi).'
-          : 'Chơi lần lượt từng cặp, hết kho thì quay lại cặp đầu.'}
+      <p className="muted small pair-stats">
+        {remaining > 0
+          ? `Bốc ngẫu nhiên 1 cặp chưa chơi. Còn ${remaining} / ${totalPairs} cặp.`
+          : 'Đã chơi hết kho từ, ván này sẽ bắt đầu lại từ đầu.'}
       </p>
 
       <div className="bottom-bar row">

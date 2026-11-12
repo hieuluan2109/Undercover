@@ -75,9 +75,7 @@ Vì chỉ dùng một máy nên **không cần phòng, mã phòng hay kết nố
 - Chọn **số Undercover** (nút − / +).
 - Chọn **số Mr. White** (nút − / +).
 - **Số Dân thường** = tổng người − Undercover − Mr. White (tự tính, chỉ hiển thị).
-- **Chế độ chọn cặp từ** (host chọn, mặc định là **Ngẫu nhiên**):
-  - **Ngẫu nhiên:** mỗi ván bốc ngẫu nhiên 1 cặp trong kho (có thể trùng cặp đã chơi).
-  - **Lần lượt:** chơi cặp 1, 2, 3... đến hết kho rồi quay lại cặp 1.
+- Dòng thông tin kho từ: **"Còn N / tổng số cặp"** chưa chơi (mục 3.4). Hết kho thì báo ván này sẽ bắt đầu lại từ đầu.
 - Nút **"Bắt đầu"**.
 
 **Điều kiện hợp lệ** (theo [RULES.md](RULES.md)):
@@ -86,7 +84,7 @@ Vì chỉ dùng một máy nên **không cần phòng, mã phòng hay kết nố
 - Nếu không hợp lệ: nút "Bắt đầu" bị khóa và hiện lý do.
 
 ### 3.4. Khi bấm "Bắt đầu" (app tự xử lý, không có màn hình)
-1. **Lấy 1 cặp từ** trong kho theo chế độ host đã chọn (Ngẫu nhiên hoặc Lần lượt).
+1. **Bốc ngẫu nhiên 1 cặp chưa chơi** trong kho.
 2. **Chọn ngẫu nhiên từ nào trong cặp là của dân**, từ còn lại là của Undercover. Ví dụ với cặp Phở / Bún bò, ván này dân có thể nhận "Phở", ván khác lại nhận "Bún bò".
 3. **Chia vai ngẫu nhiên** cho người chơi theo số lượng đã chọn.
 4. Gán từ:
@@ -94,7 +92,12 @@ Vì chỉ dùng một máy nên **không cần phòng, mã phòng hay kết nố
    - Undercover → từ của Undercover.
    - Mr. White → không có từ.
 
-**Ghi nhớ vị trí ở chế độ Lần lượt:** app lưu cặp đã chơi gần nhất trong bộ nhớ trình duyệt. Lưu này tách riêng với ván đang chơi, nên bấm "Chơi lại" hay "Tạo ván mới" vẫn đi tiếp đúng cặp kế theo.
+**Không lặp cặp đã chơi:** app lưu danh sách cặp đã chơi trong bộ nhớ trình duyệt, tách riêng với ván đang chơi, nên "Chơi lại" hay "Tạo ván mới" cũng không gặp lại cặp cũ.
+- Cặp được tính là đã chơi ngay khi bấm "Bắt đầu" (lúc đó mọi người đã xem từ), kể cả khi ván kết thúc sớm.
+- Cặp được nhận diện bằng chữ của 2 từ, nên cặp mới thêm vào kho (hoặc cặp được sửa chữ) tự tính là chưa chơi.
+- Chơi hết kho thì tự bắt đầu lại từ đầu. Có thể đặt lại thủ công trong Cài đặt (mục 8).
+- App **không** hiện danh sách từ đã chơi / chưa chơi, vì host cũng là người chơi.
+- Danh sách lưu riêng trên từng máy.
 
 ### 3.5. Chuyền máy xem từ (lặp cho từng người)
 
@@ -291,6 +294,8 @@ Mở từ màn hình chính. Cài đặt được **lưu trong bộ nhớ trình
 |---|---|---|
 | Thứ tự nói | **Chỉ người nói đầu** / **Cả thứ tự** | Chỉ người nói đầu |
 | Cho phép Mr. White đi đầu | Bật / Tắt | Tắt |
+
+Ngoài ra có dòng **"Đã chơi X / tổng số cặp"** và nút **"Đặt lại các cặp đã chơi"** (có hộp xác nhận), xem mục 3.4.
 
 ---
 

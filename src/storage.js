@@ -5,7 +5,7 @@
 export const KEYS = {
   game: 'undercover:game:v1',
   settings: 'undercover:settings:v1',
-  lastPair: 'undercover:lastPair:v1',
+  playedPairs: 'undercover:playedPairs:v1',
   groups: 'undercover:groups:v1',
 }
 

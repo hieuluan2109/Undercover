@@ -1,5 +1,9 @@
 // Màn hình chính, Cài đặt (APP_FLOW 8) và tóm tắt luật chơi.
 
+import { useState } from 'react'
+import { ConfirmDialog } from '../components/Dialog.jsx'
+import { pairStats, resetPlayedPairs } from '../game.js'
+
 export function HomeScreen({ hasGame, onContinue, onNewGame, onGroups, onSettings, onRules }) {
   return (
     <section className="screen center">
@@ -31,6 +35,10 @@ export function HomeScreen({ hasGame, onContinue, onNewGame, onGroups, onSetting
 }
 
 export function SettingsScreen({ settings, onChange, onBack }) {
+  const [stats, setStats] = useState(pairStats)
+  const [confirmReset, setConfirmReset] = useState(false)
+  const played = stats.total - stats.remaining
+
   return (
     <section className="screen">
       <h1>Cài đặt</h1>
@@ -70,11 +78,34 @@ export function SettingsScreen({ settings, onChange, onBack }) {
 
       <p className="muted small">Cài đặt áp dụng từ ván tiếp theo.</p>
 
+      <h3>Cặp từ</h3>
+      <p className="muted small">
+        Đã chơi {played} / {stats.total} cặp. Mỗi ván bốc 1 cặp chưa chơi, hết kho thì bắt đầu lại.
+      </p>
+      <button className="btn" disabled={played === 0} onClick={() => setConfirmReset(true)}>
+        Đặt lại các cặp đã chơi
+      </button>
+
       <div className="bottom-bar">
         <button className="btn primary big" onClick={onBack}>
           Xong
         </button>
       </div>
+
+      {confirmReset ? (
+        <ConfirmDialog
+          title="Đặt lại các cặp đã chơi?"
+          message="Mọi cặp từ sẽ được tính là chưa chơi, nên có thể gặp lại cặp cũ."
+          confirmLabel="Đặt lại"
+          danger
+          onCancel={() => setConfirmReset(false)}
+          onConfirm={() => {
+            resetPlayedPairs()
+            setStats(pairStats())
+            setConfirmReset(false)
+          }}
+        />
+      ) : null}
     </section>
   )
 }

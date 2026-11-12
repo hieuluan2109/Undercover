@@ -1,8 +1,8 @@
-// Luật và trạng thái ván chơi. Chỉ chứa hàm thuần (trừ việc bốc cặp từ),
-// để App.jsx chỉ việc gọi reducer.
+// Luật và trạng thái ván chơi. Reducer là hàm thuần; việc bốc cặp từ (có ghi
+// localStorage) được gọi riêng lúc bấm "Bắt đầu" rồi truyền vào action.
 
 import { WORD_PAIRS } from './words.js'
-import { KEYS, load, save } from './storage.js'
+import { KEYS, load, remove, save } from './storage.js'
 
 export const MIN_PLAYERS = 3
 export const MAX_PLAYERS = 20
@@ -85,23 +85,44 @@ function shuffle(list) {
   return copy
 }
 
-// Ghi nhớ vị trí ở chế độ "Lần lượt" tách khỏi ván chơi (APP_FLOW 3.4).
-function pickPair(pairMode) {
-  if (pairMode === 'sequential') {
-    const last = load(KEYS.lastPair, -1)
-    const next = (last + 1) % WORD_PAIRS.length
-    save(KEYS.lastPair, next)
-    return WORD_PAIRS[next]
+// ---------- Cặp từ đã chơi ----------
+
+// Nhận diện cặp bằng chữ chứ không bằng vị trí, để thêm cặp mới hay sửa cặp
+// cũ trong words.js thì cặp đó tự tính là chưa chơi.
+const pairKey = (pair) => pair.join('|')
+
+function unplayedPairs() {
+  const played = new Set(load(KEYS.playedPairs, []))
+  return WORD_PAIRS.filter((pair) => !played.has(pairKey(pair)))
+}
+
+export function pairStats() {
+  return { remaining: unplayedPairs().length, total: WORD_PAIRS.length }
+}
+
+export function resetPlayedPairs() {
+  remove(KEYS.playedPairs)
+}
+
+// Bốc ngẫu nhiên trong các cặp chưa chơi, hết kho thì bắt đầu lại (APP_FLOW 3.4).
+// Lưu tách khỏi ván chơi nên "Chơi lại" hay "Tạo ván mới" cũng không lặp cặp.
+export function pickPair() {
+  let pool = unplayedPairs()
+  let played = load(KEYS.playedPairs, [])
+  if (pool.length === 0) {
+    pool = WORD_PAIRS
+    played = []
   }
-  return WORD_PAIRS[randomInt(WORD_PAIRS.length)]
+  const pair = pool[randomInt(pool.length)]
+  save(KEYS.playedPairs, [...played, pairKey(pair)])
+  return pair
 }
 
 function canSpeakFirst(player, settings) {
   return settings.allowMrWhiteFirst || player.role !== ROLE.mrWhite
 }
 
-export function createGame({ names, counts, pairMode, settings }) {
-  const pair = pickPair(pairMode)
+export function createGame({ names, counts, settings, pair }) {
   const civilianFirst = Math.random() < 0.5
   const words = {
     civilian: civilianFirst ? pair[0] : pair[1],
@@ -141,7 +162,6 @@ export function createGame({ names, counts, pairMode, settings }) {
     phase: 'reveal',
     names,
     counts,
-    pairMode,
     settings,
     words,
     players,
@@ -211,15 +231,15 @@ function finishElimination(game) {
 // ---------- Reducer ----------
 
 // counts = null nghĩa là chưa chọn, sẽ gợi ý theo số người khi sang màn chọn vai.
-// "Chơi lại" giữ số vai và chế độ cặp từ của ván trước.
-export function emptyGame(names = [], counts = null, pairMode = 'random') {
-  return { phase: 'players', names, counts, pairMode }
+// "Chơi lại" giữ số vai của ván trước.
+export function emptyGame(names = [], counts = null) {
+  return { phase: 'players', names, counts }
 }
 
 function applyAction(game, action) {
   switch (action.type) {
     case 'new':
-      return emptyGame(action.names, action.counts, action.pairMode)
+      return emptyGame(action.names, action.counts)
 
     case 'addName': {
       if (validateNewName(action.name, game.names)) return game
@@ -261,11 +281,8 @@ function applyAction(game, action) {
       return { ...game, counts }
     }
 
-    case 'setPairMode':
-      return { ...game, pairMode: action.mode }
-
     case 'start':
-      return createGame({ ...game, settings: action.settings })
+      return createGame({ ...game, settings: action.settings, pair: action.pair })
 
     case 'markSeen': {
       const players = game.players.map((p, i) =>

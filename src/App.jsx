@@ -1,6 +1,6 @@
 import { useEffect, useReducer, useState } from 'react'
 import { ConfirmDialog, Dialog } from './components/Dialog.jsx'
-import { DEFAULT_SETTINGS, canEndNow, canUndo, gameReducer, nextUndoLabel } from './game.js'
+import { DEFAULT_SETTINGS, canEndNow, canUndo, gameReducer, nextUndoLabel, pickPair } from './game.js'
 import { KEYS, load, remove, save } from './storage.js'
 import { loadGroups, saveGroups } from './groups.js'
 import { GroupsScreen } from './screens/GroupScreens.jsx'
@@ -51,7 +51,7 @@ function GameView({ game, dispatch, settings, groups, onGroupsChange, onReplay, 
       )
     case 'roles':
       return (
-        <RolesScreen game={game} dispatch={dispatch} onStart={() => dispatch({ type: 'start', settings })} />
+        <RolesScreen game={game} dispatch={dispatch} onStart={() => dispatch({ type: 'start', settings, pair: pickPair() })} />
       )
     case 'reveal': {
       const player = game.players[game.revealIndex]
@@ -164,8 +164,8 @@ export default function App() {
     saveGroups(next)
   }
 
-  const startNewGame = (names = [], counts = null, pairMode = 'random') => {
-    dispatch({ type: 'new', names, counts, pairMode })
+  const startNewGame = (names = [], counts = null) => {
+    dispatch({ type: 'new', names, counts })
     setConfirmNew(false)
     setScreen('game')
   }
@@ -230,7 +230,7 @@ export default function App() {
         settings={settings}
         groups={groups}
         onGroupsChange={changeGroups}
-        onReplay={() => startNewGame(game.names, game.counts, game.pairMode)}
+        onReplay={() => startNewGame(game.names, game.counts)}
         onNewGame={() => startNewGame()}
       />
       {menuOpen && canEndNow(game) ? (
