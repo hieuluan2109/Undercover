@@ -94,6 +94,11 @@ p {
   border-bottom: 1px solid var(--border);
 }
 
+/* Giữ chỗ cho nút ⋮ khi nút bị ẩn, để thanh trên không bị xô lệch. */
+.topbar-spacer {
+  width: 40px;
+}
+
 .screen {
   flex: 1;
   display: flex;
@@ -538,6 +543,10 @@ p {
   background: var(--mrwhite);
 }
 
+.winner-banner.stopped {
+  background: #4b5563;
+}
+
 .words {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -595,6 +604,16 @@ p {
   flex-direction: column;
   gap: 0.75rem;
   text-align: center;
+}
+
+.menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.menu-list p {
+  margin: 0;
 }
 
 .dialog .name-grid {

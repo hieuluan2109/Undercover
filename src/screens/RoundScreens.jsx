@@ -83,7 +83,7 @@ export function PickOutScreen({ game, dispatch }) {
       {pending !== null ? (
         <ConfirmDialog
           title={`Loại ${game.players[pending].name}?`}
-          message="Không thể hoàn tác sau khi xác nhận."
+          message="Nếu bấm nhầm, có thể hoàn tác ở menu ⋮."
           confirmLabel="Loại"
           danger
           onCancel={() => setPending(null)}
@@ -199,8 +199,9 @@ export function EndScreen({ game, onReplay, onNewGame }) {
   return (
     <section className="screen">
       <div className={`winner-banner ${game.winner}`}>
-        <p className="big-icon">🏆</p>
+        <p className="big-icon">{game.winner === 'stopped' ? '⏹' : '🏆'}</p>
         <h1>{WINNER_LABEL[game.winner]}</h1>
+        {game.winner === 'stopped' ? <p>Ván được kết thúc giữa chừng, không có phe thắng.</p> : null}
       </div>
 
       <div className="words">

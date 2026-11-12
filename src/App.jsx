@@ -1,6 +1,6 @@
 import { useEffect, useReducer, useState } from 'react'
-import { ConfirmDialog } from './components/Dialog.jsx'
-import { DEFAULT_SETTINGS, gameReducer } from './game.js'
+import { ConfirmDialog, Dialog } from './components/Dialog.jsx'
+import { DEFAULT_SETTINGS, canEndNow, canUndo, gameReducer, nextUndoLabel } from './game.js'
 import { KEYS, load, remove, save } from './storage.js'
 import { HomeScreen, RulesScreen, SettingsScreen } from './screens/MenuScreens.jsx'
 import { AllSeenScreen, RevealScreen } from './screens/RevealScreens.jsx'
@@ -80,12 +80,68 @@ function GameView({ game, dispatch, settings, onReplay, onNewGame }) {
   }
 }
 
+// Menu ⋮ trong ván: hoàn tác 1 bước hoặc dừng ván ngay.
+function GameMenu({ game, dispatch, onClose }) {
+  const [confirm, setConfirm] = useState(null) // 'undo' | 'end' | null
+  const undoLabel = nextUndoLabel(game)
+
+  const run = (action) => {
+    dispatch(action)
+    onClose()
+  }
+
+  if (confirm === 'undo') {
+    return (
+      <ConfirmDialog
+        title="Hoàn tác?"
+        message={`Quay lại trước bước: ${undoLabel}.`}
+        confirmLabel="Hoàn tác"
+        onCancel={() => setConfirm(null)}
+        onConfirm={() => run({ type: 'undo' })}
+      />
+    )
+  }
+  if (confirm === 'end') {
+    return (
+      <ConfirmDialog
+        title="Kết thúc ván ngay?"
+        message="Ván sẽ dừng và công khai từ cùng vai của mọi người. Không thể chơi tiếp ván này."
+        confirmLabel="Kết thúc"
+        danger
+        onCancel={() => setConfirm(null)}
+        onConfirm={() => run({ type: 'endNow' })}
+      />
+    )
+  }
+
+  return (
+    <Dialog onClose={onClose}>
+      <h2>Tùy chọn ván</h2>
+      <div className="menu-list">
+        <button className="btn" disabled={!canUndo(game)} onClick={() => setConfirm('undo')}>
+          ↶ Hoàn tác{undoLabel ? `: ${undoLabel}` : ''}
+        </button>
+        {!canUndo(game) ? (
+          <p className="muted small">Chỉ hoàn tác được trong lúc chơi, và không lùi qua câu đoán của Mr. White.</p>
+        ) : null}
+        <button className="btn danger" onClick={() => setConfirm('end')}>
+          ⏹ Kết thúc ván ngay
+        </button>
+        <button className="btn ghost" onClick={onClose}>
+          Đóng
+        </button>
+      </div>
+    </Dialog>
+  )
+}
+
 export default function App() {
   const [game, dispatch] = useReducer(reducer, null, loadGame)
   const [settings, setSettings] = useState(loadSettings)
   // Tải lại trang giữa ván thì quay về đúng chỗ đang chơi (APP_FLOW 3.7).
   const [screen, setScreen] = useState(() => (game === null ? 'home' : 'game'))
   const [confirmNew, setConfirmNew] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   // Đồng bộ ván chơi với localStorage sau mỗi thay đổi.
   useEffect(() => {
@@ -146,6 +202,13 @@ export default function App() {
           ← Menu
         </button>
         <span className="muted small">{PHASE_TITLE[game.phase]}</span>
+        {canEndNow(game) ? (
+          <button className="icon-btn" aria-label="Tùy chọn ván" onClick={() => setMenuOpen(true)}>
+            ⋮
+          </button>
+        ) : (
+          <span className="topbar-spacer" />
+        )}
       </header>
       <GameView
         game={game}
@@ -154,6 +217,9 @@ export default function App() {
         onReplay={() => startNewGame(game.names, game.counts, game.pairMode)}
         onNewGame={() => startNewGame()}
       />
+      {menuOpen && canEndNow(game) ? (
+        <GameMenu game={game} dispatch={dispatch} onClose={() => setMenuOpen(false)} />
+      ) : null}
     </>
   )
 }

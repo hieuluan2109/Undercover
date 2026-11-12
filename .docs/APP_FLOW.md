@@ -5,6 +5,7 @@ Tài liệu mô tả luồng ứng dụng web Undercover cho nhóm. Luật chơi
 > - **Phần 1 (mục 1–6):** chuẩn bị ván chơi: nhập người chơi → chia vai → từng người xem từ bí mật.
 > - **Phần 2 (mục 7):** diễn biến ván chơi: mô tả → bỏ phiếu → loại người → thắng/thua.
 > - **Cài đặt (mục 8).**
+> - **Hoàn tác và kết thúc ván sớm (mục 7.8).**
 
 ---
 
@@ -123,6 +124,7 @@ Trong lúc chơi luôn có nút **"Xem lại từ"** để một người xem l�
 - Toàn bộ trạng thái ván chơi được **lưu trong bộ nhớ trình duyệt** (localStorage) sau mỗi thay đổi.
 - Lỡ tay tải lại trang hay đóng tab thì khi mở lại, app **quay về đúng chỗ đang chơi**, giữ nguyên người chơi, vai, từ và tiến trình.
 - Ván đã lưu chỉ bị xóa khi bấm **"Chơi lại"** hoặc **"Tạo ván mới"**.
+- Lịch sử hoàn tác (mục 7.8) cũng được lưu cùng ván, nên tải lại trang vẫn hoàn tác được.
 
 ### 3.8. Chơi lại với cùng nhóm
 
@@ -209,7 +211,7 @@ Việc **mô tả, thảo luận, bỏ phiếu và oẳn tù tì** đều diễn
 
 ### 7.3. Chọn người bị loại
 - Danh sách người còn trong ván. Host bấm tên người bị loại (theo kết quả bỏ phiếu ngoài đời).
-- Hộp xác nhận: **"Loại [Tên]?"** để tránh bấm nhầm. **Không có nút hoàn tác**: đã xác nhận là loại.
+- Hộp xác nhận: **"Loại [Tên]?"** để tránh bấm nhầm. Nếu vẫn loại nhầm, có thể **hoàn tác** ở menu ⋮ (mục 7.8).
 - **Hòa phiếu:** app không xử lý riêng. Nhóm tự oẳn tù tì ngoài đời rồi host chọn người thua như bình thường.
 
 ### 7.4. Công khai vai
@@ -236,9 +238,28 @@ Kiểm tra **theo đúng thứ tự** sau:
 
 ### 7.7. Màn hình kết thúc
 - **Phe thắng**: "Dân thường thắng!" / "Kẻ xâm nhập thắng!" / "Mr. White thắng!".
+  Nếu ván được kết thúc sớm (mục 7.8): **"Ván đã dừng"**, không có phe thắng.
 - **Hai từ của ván:** từ của dân và từ của Undercover.
 - **Vai của tất cả người chơi**, kể cả người còn trong ván.
 - Nút **"Chơi lại"** (mục 3.8) và **"Tạo ván mới"**.
+
+### 7.8. Hoàn tác và kết thúc ván sớm
+
+Từ lúc bắt đầu xem từ đến trước màn kết thúc, thanh trên cùng có nút **⋮** mở menu **"Tùy chọn ván"**:
+
+**↶ Hoàn tác: [bước vừa làm]** (có hộp xác nhận). Bấm nhiều lần để lùi nhiều bước (tối đa 30).
+
+| Bước được hoàn tác | Quay về |
+|---|---|
+| Loại [Tên] | Màn **Vòng N**: người đó còn trong ván, người nói đầu như trước khi loại |
+| Sang vòng N+1 | Màn công khai vai hoặc màn "Đoán sai!" |
+| Chuyển sang Mr. White đoán từ | Màn công khai vai |
+
+- **Chỉ hoàn tác trong lúc chơi** (từ màn Vòng 1 trở đi). Lúc chuyền máy xem từ thì không hoàn tác.
+- **Không lùi qua câu đoán của Mr. White:** câu đoán đã gửi là chốt, để Mr. White không đoán lại nhiều lần. Các bước trước câu đoán cũng không hoàn tác được nữa.
+- **Sau khi ván kết thúc thì không hoàn tác** vì từ và vai của mọi người đã công khai. Nếu loại nhầm làm ván kết thúc, hãy hoàn tác ngay ở màn công khai vai, trước khi bấm "Xem kết quả".
+
+**⏹ Kết thúc ván ngay** (có hộp xác nhận): ván dừng lại và sang màn kết thúc (mục 7.7) với dòng **"Ván đã dừng"**. Màn này vẫn hiện hai từ và vai của mọi người, kèm nút "Chơi lại" / "Tạo ván mới".
 
 ---
 

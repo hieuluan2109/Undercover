@@ -23,6 +23,7 @@ export const WINNER_LABEL = {
   civilian: 'Dân thường thắng!',
   infiltrators: 'Kẻ xâm nhập thắng!',
   mrWhite: 'Mr. White thắng!',
+  stopped: 'Ván đã dừng',
 }
 
 export const DEFAULT_SETTINGS = {
@@ -215,7 +216,7 @@ export function emptyGame(names = [], counts = null, pairMode = 'random') {
   return { phase: 'players', names, counts, pairMode }
 }
 
-export function gameReducer(game, action) {
+function applyAction(game, action) {
   switch (action.type) {
     case 'new':
       return emptyGame(action.names, action.counts, action.pairMode)
@@ -310,8 +311,72 @@ export function gameReducer(game, action) {
     case 'afterMrWhiteWrong':
       return finishElimination(game)
 
+    // Dừng ván giữa chừng: sang màn kết thúc, không có phe thắng.
+    case 'endNow':
+      if (!PLAY_PHASES.includes(game.phase)) return game
+      return { ...game, phase: 'ended', winner: 'stopped' }
+
     default:
       return game
   }
+}
+
+// ---------- Hoàn tác ----------
+
+// Các màn có ván đang diễn ra (đã chia vai, chưa kết thúc).
+const PLAY_PHASES = ['reveal', 'allSeen', 'round', 'pickOut', 'roleReveal', 'mrWhiteGuess', 'mrWhiteWrong']
+// Chỉ hoàn tác được trong lúc chơi, không áp dụng lúc xem từ.
+const UNDO_PHASES = ['round', 'pickOut', 'roleReveal', 'mrWhiteGuess', 'mrWhiteWrong']
+const MAX_HISTORY = 30
+
+// Nhãn mô tả thao tác sẽ được hoàn tác, null nếu thao tác đó không ghi lịch sử.
+function undoLabel(game, action, next) {
+  switch (action.type) {
+    case 'eliminate':
+      return `loại ${game.players[action.index].name}`
+    case 'afterRoleReveal':
+    case 'afterMrWhiteWrong':
+      return next.phase === 'mrWhiteGuess' ? 'chuyển sang Mr. White đoán từ' : `sang vòng ${next.round}`
+    default:
+      return null
+  }
+}
+
+export function canUndo(game) {
+  return game !== null && UNDO_PHASES.includes(game.phase) && (game.history ?? []).length > 0
+}
+
+export function canEndNow(game) {
+  return game !== null && PLAY_PHASES.includes(game.phase)
+}
+
+// Nhãn của bước sẽ bị hoàn tác tiếp theo, ví dụ "loại Minh".
+export function nextUndoLabel(game) {
+  return canUndo(game) ? game.history.at(-1).label : null
+}
+
+export function gameReducer(game, action) {
+  if (action.type === 'undo') {
+    if (!canUndo(game)) return game
+    const history = game.history.slice(0, -1)
+    return { ...game.history.at(-1).game, history }
+  }
+
+  const next = applyAction(game, action)
+  if (next === game) return game
+
+  // Đã kết thúc thì từ và vai đã lộ hết, không quay lại được nữa. Câu đoán của
+  // Mr. White cũng là mốc không lùi qua được, để không đoán lại nhiều lần.
+  if (next.phase === 'ended' || action.type === 'mrWhiteGuess') {
+    const { history: _, ...rest } = next
+    return rest
+  }
+
+  const label = undoLabel(game, action, next)
+  if (!label) return next
+  const { history = [], ...snapshot } = game
+  // Hoàn tác việc loại người thì quay về màn Vòng N, không phải màn chọn tên.
+  if (action.type === 'eliminate') snapshot.phase = 'round'
+  return { ...next, history: [...history, { label, game: snapshot }].slice(-MAX_HISTORY) }
 }
 
