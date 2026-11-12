@@ -302,3 +302,30 @@ Ngoài ra có dòng **"Đã chơi X / tổng số cặp"** và nút **"Đặt l�
 ## 9. Câu hỏi còn mở
 
 Phần 1 và Phần 2 đều không còn câu hỏi nào.
+
+---
+
+## 10. Chơi nhiều máy (thử nghiệm)
+
+Mỗi người dùng điện thoại của mình, không cần chuyền máy. Các máy kết nối trực tiếp với nhau qua **PeerJS (WebRTC)**. Máy chủ PeerJS miễn phí chỉ dùng để các máy tìm thấy nhau; dữ liệu ván chơi đi thẳng giữa các máy. Vẫn không có backend riêng.
+
+### 10.1. Luồng
+1. Host bấm **"Chơi nhiều máy"** ở màn hình chính → app mở phòng với **mã 5 ký tự** và **mã QR** (link `?room=MÃ`).
+2. Host nhập tên mình (host cũng là người chơi). Người khác quét QR → nhập tên → vào phòng.
+   - **Trùng tên** (không phân biệt hoa thường) với người đang kết nối → báo lỗi, nhập tên khác.
+   - Trùng tên với người **đã mất kết nối** → coi là người đó vào lại.
+   - Ván đã bắt đầu thì không nhận người mới.
+3. Host thấy danh sách người trong phòng (chấm xanh = đang kết nối), có thể mời ai đó ra. Đủ 3 người thì **Tiếp tục** → chọn số vai → **Bắt đầu**.
+4. **Mỗi người xem từ trên máy mình** rồi bấm "Tôi đã xem". Host thấy ai đã xem, rồi bấm **Bắt đầu chơi** (không bắt buộc chờ đủ).
+5. Mô tả, thảo luận, bỏ phiếu vẫn ngoài đời. **Host điều khiển ván** như chế độ một máy (chọn người bị loại, hoàn tác, kết thúc ván ngay). Mọi máy cùng thấy vòng hiện tại, người nói đầu, ai bị loại và vai được công khai; mỗi người xem lại từ của mình trên máy mình.
+6. Mr. White bị loại **tự gõ câu đoán trên máy mình**. Nếu máy đó mất kết nối, host có thể cho Mr. White đoán trên máy host.
+7. Kết thúc: mọi máy thấy kết quả, hai từ và vai của mọi người. **"Chơi lại"** giữ nguyên phòng và người chơi; **"Đóng phòng"** thoát chế độ nhiều máy.
+
+### 10.2. Bảo mật từ
+Máy host giữ toàn bộ ván chơi và chỉ gửi cho mỗi máy **phần nó được thấy**: từ của chính mình, vai của người đã bị loại. Từ của người khác không đi qua mạng tới máy mình.
+
+### 10.3. Mất kết nối
+- Người chơi tải lại trang → tự vào lại phòng (nhớ trong tab). Đóng tab rồi quét lại QR → nhập đúng tên cũ.
+- Host tải lại trang → phòng tự mở lại với cùng mã, các máy tự kết nối lại sau vài giây.
+- Host phải **giữ app mở** trong suốt ván. Menu ⋮ có **"Hiện mã QR phòng"** để ai lỡ thoát quét lại.
+- Hạn chế đã biết: máy dùng 4G và máy dùng WiFi đôi khi không kết nối được với nhau (chưa có máy chủ TURN). Nên chơi chung một mạng WiFi.
