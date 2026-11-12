@@ -1,6 +1,6 @@
 // Màn hình chính, Cài đặt (APP_FLOW 8) và tóm tắt luật chơi.
 
-export function HomeScreen({ hasGame, onContinue, onNewGame, onSettings, onRules }) {
+export function HomeScreen({ hasGame, onContinue, onNewGame, onGroups, onSettings, onRules }) {
   return (
     <section className="screen center">
       <p className="big-icon">🕵️</p>
@@ -15,6 +15,9 @@ export function HomeScreen({ hasGame, onContinue, onNewGame, onSettings, onRules
         ) : null}
         <button className={hasGame ? 'btn big' : 'btn primary big'} onClick={onNewGame}>
           Tạo ván mới
+        </button>
+        <button className="btn" onClick={onGroups}>
+          👥 Nhóm người chơi
         </button>
         <button className="btn" onClick={onSettings}>
           ⚙️ Cài đặt

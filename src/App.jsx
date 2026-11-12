@@ -2,6 +2,8 @@ import { useEffect, useReducer, useState } from 'react'
 import { ConfirmDialog, Dialog } from './components/Dialog.jsx'
 import { DEFAULT_SETTINGS, canEndNow, canUndo, gameReducer, nextUndoLabel } from './game.js'
 import { KEYS, load, remove, save } from './storage.js'
+import { loadGroups, saveGroups } from './groups.js'
+import { GroupsScreen } from './screens/GroupScreens.jsx'
 import { HomeScreen, RulesScreen, SettingsScreen } from './screens/MenuScreens.jsx'
 import { AllSeenScreen, RevealScreen } from './screens/RevealScreens.jsx'
 import { PlayersScreen, RolesScreen } from './screens/SetupScreens.jsx'
@@ -41,10 +43,12 @@ const PHASE_TITLE = {
   ended: 'Kết thúc',
 }
 
-function GameView({ game, dispatch, settings, onReplay, onNewGame }) {
+function GameView({ game, dispatch, settings, groups, onGroupsChange, onReplay, onNewGame }) {
   switch (game.phase) {
     case 'players':
-      return <PlayersScreen names={game.names} dispatch={dispatch} />
+      return (
+        <PlayersScreen names={game.names} dispatch={dispatch} groups={groups} onGroupsChange={onGroupsChange} />
+      )
     case 'roles':
       return (
         <RolesScreen game={game} dispatch={dispatch} onStart={() => dispatch({ type: 'start', settings })} />
@@ -138,6 +142,7 @@ function GameMenu({ game, dispatch, onClose }) {
 export default function App() {
   const [game, dispatch] = useReducer(reducer, null, loadGame)
   const [settings, setSettings] = useState(loadSettings)
+  const [groups, setGroups] = useState(loadGroups)
   // Tải lại trang giữa ván thì quay về đúng chỗ đang chơi (APP_FLOW 3.7).
   const [screen, setScreen] = useState(() => (game === null ? 'home' : 'game'))
   const [confirmNew, setConfirmNew] = useState(false)
@@ -154,6 +159,11 @@ export default function App() {
     save(KEYS.settings, next)
   }
 
+  const changeGroups = (next) => {
+    setGroups(next)
+    saveGroups(next)
+  }
+
   const startNewGame = (names = [], counts = null, pairMode = 'random') => {
     dispatch({ type: 'new', names, counts, pairMode })
     setConfirmNew(false)
@@ -168,6 +178,9 @@ export default function App() {
   if (screen === 'settings') {
     return <SettingsScreen settings={settings} onChange={changeSettings} onBack={() => setScreen('home')} />
   }
+  if (screen === 'groups') {
+    return <GroupsScreen groups={groups} onChange={changeGroups} onBack={() => setScreen('home')} />
+  }
   if (screen === 'rules') {
     return <RulesScreen onBack={() => setScreen('home')} />
   }
@@ -178,6 +191,7 @@ export default function App() {
           hasGame={isInProgress(game)}
           onContinue={() => setScreen('game')}
           onNewGame={requestNewGame}
+          onGroups={() => setScreen('groups')}
           onSettings={() => setScreen('settings')}
           onRules={() => setScreen('rules')}
         />
@@ -214,6 +228,8 @@ export default function App() {
         game={game}
         dispatch={dispatch}
         settings={settings}
+        groups={groups}
+        onGroupsChange={changeGroups}
         onReplay={() => startNewGame(game.names, game.counts, game.pairMode)}
         onNewGame={() => startNewGame()}
       />

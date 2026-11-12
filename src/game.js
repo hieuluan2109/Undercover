@@ -226,6 +226,11 @@ function applyAction(game, action) {
       return { ...game, names: [...game.names, normalizeName(action.name)] }
     }
 
+    // Nạp cả danh sách từ một nhóm đã lưu.
+    case 'setNames':
+      if (game.phase !== 'players') return game
+      return { ...game, names: action.names.slice(0, MAX_PLAYERS) }
+
     case 'removeName':
       return { ...game, names: game.names.filter((_, i) => i !== action.index) }
 

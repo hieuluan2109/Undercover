@@ -1,32 +1,87 @@
 import { useState } from 'react'
-import {
-  MAX_PLAYERS,
-  MIN_PLAYERS,
-  civilianCount,
-  normalizeName,
-  validateCounts,
-  validateNewName,
-} from '../game.js'
+import { Dialog } from '../components/Dialog.jsx'
+import { NameListEditor } from '../components/NameListEditor.jsx'
+import { MAX_PLAYERS, MIN_PLAYERS, civilianCount, normalizeName, validateCounts } from '../game.js'
+import { MAX_NAME_LENGTH, defaultGroupName, newGroupId } from '../groups.js'
+
+function PickGroupDialog({ groups, onPick, onClose }) {
+  return (
+    <Dialog onClose={onClose}>
+      <h2>Chọn nhóm</h2>
+      <p className="muted small">Danh sách hiện tại sẽ được thay bằng người trong nhóm.</p>
+      <div className="menu-list">
+        {groups.map((g) => (
+          <button key={g.id} className="btn group-btn" onClick={() => onPick(g)}>
+            <strong>{g.name}</strong>
+            <span className="muted small">{g.names.length} người</span>
+          </button>
+        ))}
+        <button className="btn ghost" onClick={onClose}>
+          Hủy
+        </button>
+      </div>
+    </Dialog>
+  )
+}
+
+function SaveGroupDialog({ names, groups, onSave, onClose }) {
+  const [name, setName] = useState(() => defaultGroupName(groups))
+  const clean = normalizeName(name)
+
+  return (
+    <Dialog onClose={onClose}>
+      <h2>Lưu thành nhóm</h2>
+      <p className="muted small">Lưu {names.length} người hiện tại để lần sau chọn lại nhanh.</p>
+      <form
+        className="add-form"
+        onSubmit={(e) => {
+          e.preventDefault()
+          if (clean) onSave({ id: newGroupId(), name: clean, names })
+        }}
+      >
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          aria-label="Tên nhóm"
+          maxLength={MAX_NAME_LENGTH}
+        />
+        <button className="btn primary" type="submit" disabled={!clean}>
+          Lưu
+        </button>
+      </form>
+      {groups.length > 0 ? (
+        <>
+          <h3>Hoặc ghi đè nhóm cũ</h3>
+          <div className="menu-list">
+            {groups.map((g) => (
+              <button key={g.id} className="btn group-btn" onClick={() => onSave({ ...g, names })}>
+                <strong>{g.name}</strong>
+                <span className="muted small">{g.names.length} người</span>
+              </button>
+            ))}
+          </div>
+        </>
+      ) : null}
+      <div className="menu-list">
+        <button className="btn ghost" onClick={onClose}>
+          Hủy
+        </button>
+      </div>
+    </Dialog>
+  )
+}
 
 // APP_FLOW 3.2: nhập người chơi.
-export function PlayersScreen({ names, dispatch }) {
-  const [input, setInput] = useState('')
-  const [error, setError] = useState(null)
+export function PlayersScreen({ names, dispatch, groups, onGroupsChange }) {
+  const [dialog, setDialog] = useState(null) // 'pick' | 'save' | null
+  const [notice, setNotice] = useState(null)
+  const canContinue = names.length >= MIN_PLAYERS && names.length <= MAX_PLAYERS
 
-  const count = names.length
-  const full = count >= MAX_PLAYERS
-  const canContinue = count >= MIN_PLAYERS && count <= MAX_PLAYERS
-
-  const add = (e) => {
-    e.preventDefault()
-    const problem = validateNewName(input, names)
-    if (problem) {
-      setError(problem)
-      return
-    }
-    dispatch({ type: 'addName', name: input })
-    setInput('')
-    setError(null)
+  const saveGroup = (group) => {
+    const exists = groups.some((g) => g.id === group.id)
+    onGroupsChange(exists ? groups.map((g) => (g.id === group.id ? group : g)) : [group, ...groups])
+    setDialog(null)
+    setNotice(`Đã lưu nhóm "${group.name}".`)
   }
 
   return (
@@ -34,61 +89,25 @@ export function PlayersScreen({ names, dispatch }) {
       <h1>Người chơi</h1>
       <p className="muted">Nhập tên từng người, kể cả bạn. Thứ tự này cũng là thứ tự chuyền máy xem từ.</p>
 
-      <form className="add-form" onSubmit={add}>
-        <input
-          value={input}
-          onChange={(e) => {
-            setInput(e.target.value)
-            setError(null)
-          }}
-          placeholder={full ? 'Đã đủ 20 người' : 'Tên người chơi'}
-          disabled={full}
-          autoFocus
-          enterKeyHint="done"
-          maxLength={24}
-        />
-        <button className="btn primary" type="submit" disabled={full || !normalizeName(input)}>
-          Thêm
+      <div className="row group-actions">
+        <button className="btn" disabled={groups.length === 0} onClick={() => setDialog('pick')}>
+          👥 Chọn nhóm
         </button>
-      </form>
-      {error ? <p className="error">{error}</p> : null}
+        <button className="btn" disabled={names.length === 0} onClick={() => setDialog('save')}>
+          💾 Lưu nhóm
+        </button>
+      </div>
+      {notice ? <p className="notice small">{notice}</p> : null}
 
-      <p className={canContinue ? 'counter ok' : 'counter'}>
-        Đã có {count} người (tối thiểu {MIN_PLAYERS}, tối đa {MAX_PLAYERS})
-      </p>
-
-      <ol className="player-list">
-        {names.map((name, i) => (
-          <li key={name}>
-            <span>{name}</span>
-            <div className="player-actions">
-              <button
-                className="icon-btn"
-                aria-label={`Chuyển ${name} lên trên`}
-                disabled={i === 0}
-                onClick={() => dispatch({ type: 'moveName', index: i, delta: -1 })}
-              >
-                ↑
-              </button>
-              <button
-                className="icon-btn"
-                aria-label={`Chuyển ${name} xuống dưới`}
-                disabled={i === count - 1}
-                onClick={() => dispatch({ type: 'moveName', index: i, delta: 1 })}
-              >
-                ↓
-              </button>
-              <button
-                className="icon-btn"
-                aria-label={`Xóa ${name}`}
-                onClick={() => dispatch({ type: 'removeName', index: i })}
-              >
-                ✕
-              </button>
-            </div>
-          </li>
-        ))}
-      </ol>
+      <NameListEditor
+        names={names}
+        onAdd={(name) => {
+          dispatch({ type: 'addName', name })
+          setNotice(null)
+        }}
+        onRemove={(index) => dispatch({ type: 'removeName', index })}
+        onMove={(index, delta) => dispatch({ type: 'moveName', index, delta })}
+      />
 
       <div className="bottom-bar">
         <button
@@ -99,6 +118,21 @@ export function PlayersScreen({ names, dispatch }) {
           Tiếp tục
         </button>
       </div>
+
+      {dialog === 'pick' ? (
+        <PickGroupDialog
+          groups={groups}
+          onClose={() => setDialog(null)}
+          onPick={(g) => {
+            dispatch({ type: 'setNames', names: g.names })
+            setDialog(null)
+            setNotice(`Đã chọn nhóm "${g.name}".`)
+          }}
+        />
+      ) : null}
+      {dialog === 'save' ? (
+        <SaveGroupDialog names={names} groups={groups} onSave={saveGroup} onClose={() => setDialog(null)} />
+      ) : null}
     </section>
   )
 }

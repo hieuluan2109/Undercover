@@ -6,6 +6,7 @@ Tài liệu mô tả luồng ứng dụng web Undercover cho nhóm. Luật chơi
 > - **Phần 2 (mục 7):** diễn biến ván chơi: mô tả → bỏ phiếu → loại người → thắng/thua.
 > - **Cài đặt (mục 8).**
 > - **Hoàn tác và kết thúc ván sớm (mục 7.8).**
+> - **Nhóm người chơi (mục 3.9).**
 
 ---
 
@@ -52,6 +53,7 @@ Vì chỉ dùng một máy nên **không cần phòng, mã phòng hay kết nố
 ### 3.1. Màn hình chính
 - Tên trò chơi.
 - Nút **"Tạo ván mới"**.
+- Nút **"Nhóm người chơi"** (mục 3.9).
 - Nút **"Cài đặt"** (mục 8).
 - (Tùy chọn) Link tới luật chơi.
 
@@ -60,6 +62,8 @@ Vì chỉ dùng một máy nên **không cần phòng, mã phòng hay kết nố
 - Danh sách người chơi đã thêm, mỗi người có nút **xóa**.
 - Bộ đếm: "Đã có N người (tối thiểu 3, tối đa 20)".
 - Nút **"Tiếp tục"**: chỉ bấm được khi có từ 3 đến 20 người.
+- Nút **"Chọn nhóm"**: thay danh sách hiện tại bằng người trong một nhóm đã lưu (mục 3.9).
+- Nút **"Lưu nhóm"**: lưu danh sách hiện tại thành nhóm mới, hoặc ghi đè lên một nhóm cũ.
 
 **Kiểm tra tên:**
 - Không được để trống (bỏ khoảng trắng đầu/cuối).
@@ -131,6 +135,21 @@ Trong lúc chơi luôn có nút **"Xem lại từ"** để một người xem l�
 - Sau khi một ván kết thúc, bấm **"Chơi lại"**: app **giữ nguyên danh sách người chơi** và quay về màn hình **Nhập người chơi** (mục 3.2), nơi host có thể thêm/xóa người rồi đi tiếp như bình thường.
 - Mỗi ván mới chia lại vai và chọn lại cặp từ ngẫu nhiên.
 
+### 3.9. Nhóm người chơi
+
+Lưu sẵn các nhóm hay chơi cùng để lúc tạo ván không phải gõ lại tên. Nhóm được **lưu trong bộ nhớ trình duyệt**, tách riêng với ván đang chơi.
+
+Màn **"Nhóm người chơi"** (mở từ màn hình chính) có:
+- Danh sách nhóm: tên nhóm, số người, các tên trong nhóm.
+- Mỗi nhóm có nút **Sửa** (đổi tên nhóm, thêm/xóa/đổi thứ tự người), **Nhân bản**, **Chia sẻ**, **Xóa** (có hộp xác nhận).
+- Nút **"+ Tạo nhóm"** và **"Dán nhóm"**.
+
+**Chuyển nhóm sang máy khác:** dùng chữ thường, **mỗi tên một dòng**, để gửi qua Zalo/Messenger và sửa tay được.
+- **Chia sẻ:** hiện danh sách tên, nút **"Chép danh sách"** và (trên điện thoại) **"Gửi qua ứng dụng khác"**.
+- **Dán nhóm:** dán danh sách vào ô, app tự tách tên theo dòng (hoặc dấu phẩy), bỏ số thứ tự / gạch đầu dòng ("1. Lan", "- Minh"), bỏ tên trùng và chỉ lấy tối đa 20 người. Sau đó mở màn sửa nhóm để xem lại, đặt tên rồi lưu.
+
+"Chơi lại" vẫn giữ danh sách của ván trước như mục 3.8, không cần chọn lại nhóm.
+
 ---
 
 ## 4. Dữ liệu cần lưu (trong trình duyệt)
@@ -142,6 +161,7 @@ Trong lúc chơi luôn có nút **"Xem lại từ"** để một người xem l�
 | Cặp từ của ván | `civilian: "Cà phê", undercover: "Trà sữa"` |
 | Vai + từ của từng người | `Lan → Dân thường, "Cà phê"` |
 | Ai đã xem từ | `Lan: đã xem, Minh: chưa` |
+| Nhóm người chơi đã lưu (tách riêng với ván) | `Nhóm 1: ["Lan", "Minh", "Hùng"]` |
 
 ---
 

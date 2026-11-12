@@ -227,7 +227,9 @@ p {
 }
 
 .add-form input,
-.guess-form input {
+.guess-form input,
+.field input,
+.names-text {
   flex: 1;
   min-width: 0;
   font: inherit;
@@ -614,6 +616,62 @@ p {
 
 .menu-list p {
   margin: 0;
+}
+
+/* ---------- Nhóm người chơi ---------- */
+
+.group-actions {
+  margin-top: 0.75rem;
+}
+
+.notice {
+  color: var(--success);
+  font-weight: 500;
+}
+
+.group-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: left;
+}
+
+.group-card p {
+  margin: 0 0 0.25rem;
+}
+
+.group-names {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.group-card-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.group-card-actions .btn {
+  min-height: 40px;
+  padding: 0.4rem 0.25rem;
+  font-size: 0.85rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.75rem;
+}
+
+.names-text {
+  width: 100%;
+  margin: 0.5rem 0;
+  resize: vertical;
+  line-height: 1.4;
 }
 
 .dialog .name-grid {
