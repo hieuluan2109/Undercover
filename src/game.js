@@ -123,6 +123,8 @@ function canSpeakFirst(player, settings) {
 }
 
 export function createGame({ names, counts, settings, pair, online = null }) {
+  // Chơi nhiều máy: mỗi máy luôn hiện cả thứ tự nói, dễ theo dõi khi nhóm đông.
+  if (online) settings = { ...settings, speakingOrder: 'full' }
   const civilianFirst = Math.random() < 0.5
   const words = {
     civilian: civilianFirst ? pair[0] : pair[1],
@@ -248,6 +250,26 @@ export function tokenName(game, token) {
   return entry ? entry[0] : null
 }
 
+// Chưa chia vai: người mới vào phòng được thêm thẳng vào danh sách chơi.
+const isLobby = (game) => game.phase === 'players' || game.phase === 'roles'
+
+// Mọi người trong phòng, gồm cả người vào giữa ván đang chờ ván sau.
+function memberNames(game) {
+  return Object.keys(game.online?.tokens ?? {})
+}
+
+// Người vào phòng khi ván đang diễn ra: chưa có trong ván, sẽ được thêm vào
+// danh sách khi host bấm "Chơi lại".
+export function waitingNames(game) {
+  if (!game || isLobby(game)) return []
+  return memberNames(game).filter((n) => !game.names.includes(n))
+}
+
+const findName = (names, name) => {
+  const lower = name.toLocaleLowerCase('vi')
+  return names.find((n) => n.toLocaleLowerCase('vi') === lower)
+}
+
 // Kiểm tra một máy xin vào phòng với tên này. connected là tập token đang kết
 // nối, để người lỡ tải lại trang (mất token) vẫn vào lại được bằng đúng tên cũ.
 // Trả về lý do không vào được, hoặc null nếu hợp lệ.
@@ -255,18 +277,18 @@ export function checkJoin(game, name, token, connected) {
   const clean = normalizeName(name)
   if (!clean) return 'Tên không được để trống.'
   const current = tokenName(game, token)
-  const lower = clean.toLocaleLowerCase('vi')
-  const taken = game.names.find((n) => n.toLocaleLowerCase('vi') === lower)
-  if (taken && taken !== current) {
-    if (current && game.phase !== 'players') return `Bạn đang chơi với tên "${current}".`
+  const taken = findName(memberNames(game), clean)
+  if (taken === current && current) return null
+  // Đang chơi thì không đổi tên được, vì tên gắn với vai và từ trong ván.
+  if (current && !isLobby(game) && game.names.includes(current)) {
+    return `Bạn đang chơi với tên "${current}".`
+  }
+  if (taken) {
     // Tên đã có người: chỉ cho nhận lại nếu máy giữ tên đó đã mất kết nối.
-    const owner = game.online.tokens[taken]
-    if (owner && connected.has(owner)) return `"${clean}" đã có người dùng, hãy nhập tên khác.`
+    if (connected.has(game.online.tokens[taken])) return `"${clean}" đã có người dùng, hãy nhập tên khác.`
     return null
   }
-  if (taken) return null
-  if (game.phase !== 'players') return 'Ván đã bắt đầu, chờ ván sau nhé.'
-  if (!current && game.names.length >= MAX_PLAYERS) return `Phòng đã đủ ${MAX_PLAYERS} người.`
+  if (!current && memberNames(game).length >= MAX_PLAYERS) return `Phòng đã đủ ${MAX_PLAYERS} người.`
   return null
 }
 
@@ -276,29 +298,25 @@ function applyAction(game, action) {
       return emptyGame(action.names, action.counts, action.online)
 
     // Đã qua checkJoin. Trùng tên (không phân biệt hoa thường) là nhận lại tên
-    // cũ; máy đã có tên mà gửi tên mới (lúc chưa bắt đầu) là đổi tên.
+    // cũ; máy đã có tên mà gửi tên mới là đổi tên. Ván đang diễn ra thì người
+    // mới chỉ vào danh sách chờ (có token nhưng chưa có trong names).
     case 'onlineJoin': {
       const name = normalizeName(action.name)
-      const lower = name.toLocaleLowerCase('vi')
-      const taken = game.names.find((n) => n.toLocaleLowerCase('vi') === lower)
+      const taken = findName(memberNames(game), name)
       const current = tokenName(game, action.token)
       const tokens = { ...game.online.tokens }
+      if (current) delete tokens[current]
+      const lobby = isLobby(game)
+      let names = game.names
       if (taken) {
-        if (current && current !== taken) delete tokens[current]
         tokens[taken] = action.token
-        const names = current && current !== taken && game.phase === 'players'
-          ? game.names.filter((n) => n !== current)
-          : game.names
-        return { ...game, names, online: { ...game.online, tokens } }
-      }
-      if (current) {
-        delete tokens[current]
+        if (current && current !== taken && lobby) names = names.filter((n) => n !== current)
+      } else {
         tokens[name] = action.token
-        const names = game.names.map((n) => (n === current ? name : n))
-        return { ...game, names, online: { ...game.online, tokens } }
+        if (current && lobby) names = names.map((n) => (n === current ? name : n))
+        else if (lobby) names = [...names, name]
       }
-      tokens[name] = action.token
-      return { ...game, names: [...game.names, name], online: { ...game.online, tokens } }
+      return { ...game, names, online: { ...game.online, tokens } }
     }
 
     case 'onlineRemove': {

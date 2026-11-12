@@ -1,6 +1,16 @@
 import { useEffect, useReducer, useState } from 'react'
 import { ConfirmDialog, Dialog } from './components/Dialog.jsx'
-import { DEFAULT_SETTINGS, HOST_TOKEN, canEndNow, canUndo, gameReducer, nextUndoLabel, pickPair } from './game.js'
+import {
+  DEFAULT_SETTINGS,
+  HOST_TOKEN,
+  canEndNow,
+  canUndo,
+  gameReducer,
+  nextUndoLabel,
+  pickPair,
+  waitingNames,
+} from './game.js'
+import { useWakeLock } from './online/useWakeLock.js'
 import { newRoomCode } from './online/protocol.js'
 import { useHostRoom } from './online/useHostRoom.js'
 import { OnlineLobbyScreen, OnlineSeenScreen, OnlineWaitGuessScreen, RoomQr } from './screens/OnlineHostScreens.jsx'
@@ -168,6 +178,9 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [qrOpen, setQrOpen] = useState(false)
   const room = useHostRoom(game, dispatch)
+  // Máy host phải luôn mở app khi chơi nhiều máy, nên giữ màn hình sáng.
+  useWakeLock(Boolean(game?.online) && screen === 'game')
+  const waiting = waitingNames(game)
 
   // Đồng bộ ván chơi với localStorage sau mỗi thay đổi.
   useEffect(() => {
@@ -255,6 +268,11 @@ export default function App() {
           <span className="topbar-spacer" />
         )}
       </header>
+      {waiting.length > 0 ? (
+        <p className="waiting-banner">
+          🕐 Chờ ván sau ({waiting.length}): {waiting.join(', ')}
+        </p>
+      ) : null}
       <GameView
         game={game}
         dispatch={dispatch}
@@ -262,7 +280,8 @@ export default function App() {
         room={room}
         groups={groups}
         onGroupsChange={changeGroups}
-        onReplay={() => startNewGame(game.names, game.counts, game.online ?? null)}
+        // Chơi lại giữ người cũ và thêm người vào phòng giữa ván (đang chờ).
+        onReplay={() => startNewGame([...game.names, ...waiting], game.counts, game.online ?? null)}
         onNewGame={() => startNewGame()}
       />
       {menuOpen && canEndNow(game) ? (

@@ -13,7 +13,7 @@
 //   { type: 'joinError', error }
 //   { type: 'ping' }
 
-import { isAlive, speakingOrder, tokenName } from '../game.js'
+import { isAlive, speakingOrder, tokenName, waitingNames } from '../game.js'
 
 export const PING_MS = 4000
 export const TIMEOUT_MS = 15000
@@ -43,6 +43,8 @@ export function viewFor(game, token) {
   const myName = tokenName(game, token)
   const base = { room: game.online.room, phase: game.phase, names: game.names, myName }
   if (!myName) return { ...base, joined: false }
+  // Vào phòng giữa ván: chờ ván sau, chưa được thấy gì của ván đang chơi.
+  if (!game.names.includes(myName)) return { ...base, joined: true, waiting: true }
   if (!game.players) return { ...base, joined: true }
 
   const ended = game.phase === 'ended'
@@ -66,6 +68,7 @@ export function viewFor(game, token) {
     me: me ? { name: me.name, word: me.word, alive: isAlive(me), seen: me.seen } : null,
     lastOut: lastOut ? { name: lastOut.name, role: lastOut.role } : null,
     canGuess: game.phase === 'mrWhiteGuess' && lastOut?.name === myName,
+    waitingNames: waitingNames(game),
     winner: ended ? game.winner : null,
     words: ended ? game.words : null,
   }

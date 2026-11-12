@@ -666,6 +666,13 @@ p {
   font-size: 0.9rem;
 }
 
+.waiting-banner {
+  margin: 0;
+  padding: 0.5rem 1rem;
+  background: var(--highlight);
+  font-size: 0.9rem;
+}
+
 .my-word {
   display: flex;
   flex-direction: column;

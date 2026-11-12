@@ -316,12 +316,17 @@ Mỗi người dùng điện thoại của mình, không cần chuyền máy. C�
 2. Host nhập tên mình (host cũng là người chơi). Người khác quét QR → nhập tên → vào phòng.
    - **Trùng tên** (không phân biệt hoa thường) với người đang kết nối → báo lỗi, nhập tên khác.
    - Trùng tên với người **đã mất kết nối** → coi là người đó vào lại.
-   - Ván đã bắt đầu thì không nhận người mới.
+   - Máy nhớ tên đã dùng lần trước, lần sau quét QR là tên đã điền sẵn.
+   - Vào khi host đang chọn số vai → thêm thẳng vào danh sách chơi.
+   - Vào khi ván đang diễn ra → vào **danh sách chờ ván sau**. Máy host hiện dòng "Chờ ván sau: …".
 3. Host thấy danh sách người trong phòng (chấm xanh = đang kết nối), có thể mời ai đó ra. Đủ 3 người thì **Tiếp tục** → chọn số vai → **Bắt đầu**.
 4. **Mỗi người xem từ trên máy mình** rồi bấm "Tôi đã xem". Host thấy ai đã xem, rồi bấm **Bắt đầu chơi** (không bắt buộc chờ đủ).
-5. Mô tả, thảo luận, bỏ phiếu vẫn ngoài đời. **Host điều khiển ván** như chế độ một máy (chọn người bị loại, hoàn tác, kết thúc ván ngay). Mọi máy cùng thấy vòng hiện tại, người nói đầu, ai bị loại và vai được công khai; mỗi người xem lại từ của mình trên máy mình.
-6. Mr. White bị loại **tự gõ câu đoán trên máy mình**. Nếu máy đó mất kết nối, host có thể cho Mr. White đoán trên máy host.
-7. Kết thúc: mọi máy thấy kết quả, hai từ và vai của mọi người. **"Chơi lại"** giữ nguyên phòng và người chơi; **"Đóng phòng"** thoát chế độ nhiều máy.
+5. Mọi máy luôn hiện **cả thứ tự nói** (không phụ thuộc cài đặt "Thứ tự nói"), vì nhóm đông khó nhớ thứ tự.
+6. Mô tả, thảo luận, bỏ phiếu vẫn ngoài đời. **Host điều khiển ván** như chế độ một máy (chọn người bị loại, hoàn tác, kết thúc ván ngay). Mọi máy cùng thấy vòng hiện tại, người nói đầu, ai bị loại và vai được công khai; mỗi người xem lại từ của mình trên máy mình.
+7. Mr. White bị loại **tự gõ câu đoán trên máy mình**. Nếu máy đó mất kết nối, host có thể cho Mr. White đoán trên máy host.
+8. Kết thúc: mọi máy thấy kết quả, hai từ và vai của mọi người. **"Chơi lại"** giữ nguyên phòng và người chơi, **thêm người trong danh sách chờ**, rồi quay về phòng chờ để host xem lại danh sách (có thể mời ai đó ra) và bắt đầu ván mới. **"Đóng phòng"** thoát chế độ nhiều máy.
+
+Host được coi là người tin cậy: máy host giữ toàn bộ ván nên về lý thuyết xem được từ của mọi người (ví dụ qua nút "Xem lại từ").
 
 ### 10.2. Bảo mật từ
 Máy host giữ toàn bộ ván chơi và chỉ gửi cho mỗi máy **phần nó được thấy**: từ của chính mình, vai của người đã bị loại. Từ của người khác không đi qua mạng tới máy mình.
@@ -329,5 +334,6 @@ Máy host giữ toàn bộ ván chơi và chỉ gửi cho mỗi máy **phần n�
 ### 10.3. Mất kết nối
 - Người chơi tải lại trang → tự vào lại phòng (nhớ trong tab). Đóng tab rồi quét lại QR → nhập đúng tên cũ.
 - Host tải lại trang → phòng tự mở lại với cùng mã, các máy tự kết nối lại sau vài giây.
+- App **giữ màn hình luôn sáng** (Screen Wake Lock: Chrome Android, Safari iOS 16.4 trở lên) trên máy host khi đang ở trong ván, và trên máy người chơi khi đang ở trong phòng.
 - Host phải **giữ app mở** trong suốt ván. Menu ⋮ có **"Hiện mã QR phòng"** để ai lỡ thoát quét lại.
 - Hạn chế đã biết: máy dùng 4G và máy dùng WiFi đôi khi không kết nối được với nhau (chưa có máy chủ TURN). Nên chơi chung một mạng WiFi.

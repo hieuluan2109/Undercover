@@ -7,6 +7,7 @@ export const KEYS = {
   settings: 'undercover:settings:v1',
   playedPairs: 'undercover:playedPairs:v1',
   groups: 'undercover:groups:v1',
+  lastName: 'undercover:lastName:v1',
 }
 
 export function load(key, fallback) {
