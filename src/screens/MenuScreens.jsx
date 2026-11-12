@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { ConfirmDialog } from '../components/Dialog.jsx'
 import { pairStats, resetPlayedPairs } from '../game.js'
 
-export function HomeScreen({ hasGame, onContinue, onNewGame, onGroups, onSettings, onRules }) {
+export function HomeScreen({ hasGame, onContinue, onNewGame, onOnline, onGroups, onSettings, onRules }) {
   return (
     <section className="screen center">
       <p className="big-icon">🕵️</p>
@@ -19,6 +19,9 @@ export function HomeScreen({ hasGame, onContinue, onNewGame, onGroups, onSetting
         ) : null}
         <button className={hasGame ? 'btn big' : 'btn primary big'} onClick={onNewGame}>
           Tạo ván mới
+        </button>
+        <button className="btn" onClick={onOnline}>
+          📱 Chơi nhiều máy (thử nghiệm)
         </button>
         <button className="btn" onClick={onGroups}>
           👥 Nhóm người chơi

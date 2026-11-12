@@ -194,7 +194,7 @@ export function MrWhiteWrongScreen({ game, dispatch }) {
   )
 }
 
-// APP_FLOW 7.7: màn hình kết thúc.
+// APP_FLOW 7.7: màn hình kết thúc. Máy người chơi (chơi nhiều máy) không có nút.
 export function EndScreen({ game, onReplay, onNewGame }) {
   return (
     <section className="screen">
@@ -228,14 +228,16 @@ export function EndScreen({ game, onReplay, onNewGame }) {
         ))}
       </ul>
 
-      <div className="bottom-bar row">
-        <button className="btn" onClick={onNewGame}>
-          Tạo ván mới
-        </button>
-        <button className="btn primary big" onClick={onReplay}>
-          Chơi lại
-        </button>
-      </div>
+      {onReplay ? (
+        <div className="bottom-bar row">
+          <button className="btn" onClick={onNewGame}>
+            {game.online ? 'Đóng phòng' : 'Tạo ván mới'}
+          </button>
+          <button className="btn primary big" onClick={onReplay}>
+            Chơi lại
+          </button>
+        </div>
+      ) : null}
     </section>
   )
 }

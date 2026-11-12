@@ -618,6 +618,65 @@ p {
   margin: 0;
 }
 
+/* ---------- Chơi nhiều máy ---------- */
+
+.room-qr {
+  text-align: center;
+  margin: 0.5rem 0;
+}
+
+.room-qr img {
+  width: min(240px, 70vw);
+  height: auto;
+  background: #fff;
+  padding: 8px;
+  border-radius: var(--radius);
+}
+
+.room-code {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  margin: 0.25rem 0;
+}
+
+.room-qr .muted {
+  word-break: break-all;
+}
+
+.dot {
+  display: inline-block;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: var(--border);
+  vertical-align: middle;
+}
+
+.dot.on {
+  background: var(--success);
+}
+
+.conn-banner {
+  margin: 0;
+  padding: 0.5rem 1rem;
+  background: var(--danger);
+  color: #fff;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.my-word {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.center-text {
+  text-align: center;
+}
+
 /* ---------- Nhóm người chơi ---------- */
 
 .group-actions {

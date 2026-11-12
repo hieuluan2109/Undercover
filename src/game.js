@@ -122,7 +122,7 @@ function canSpeakFirst(player, settings) {
   return settings.allowMrWhiteFirst || player.role !== ROLE.mrWhite
 }
 
-export function createGame({ names, counts, settings, pair }) {
+export function createGame({ names, counts, settings, pair, online = null }) {
   const civilianFirst = Math.random() < 0.5
   const words = {
     civilian: civilianFirst ? pair[0] : pair[1],
@@ -158,8 +158,10 @@ export function createGame({ names, counts, settings, pair }) {
   const eligible = order.filter((i) => canSpeakFirst(players[i], settings))
   const firstSpeaker = eligible[randomInt(eligible.length)]
 
+  // Chơi nhiều máy: mỗi người tự xem từ trên máy mình, không chuyền máy.
   return {
-    phase: 'reveal',
+    phase: online ? 'allSeen' : 'reveal',
+    ...(online ? { online } : {}),
     names,
     counts,
     settings,
@@ -232,14 +234,88 @@ function finishElimination(game) {
 
 // counts = null nghĩa là chưa chọn, sẽ gợi ý theo số người khi sang màn chọn vai.
 // "Chơi lại" giữ số vai của ván trước.
-export function emptyGame(names = [], counts = null) {
-  return { phase: 'players', names, counts }
+// online = { room, tokens: { [tên]: token } } khi chơi nhiều máy (src/online).
+export function emptyGame(names = [], counts = null, online = null) {
+  return { phase: 'players', names, counts, ...(online ? { online } : {}) }
+}
+
+// ---------- Chơi nhiều máy ----------
+
+export const HOST_TOKEN = 'host'
+
+export function tokenName(game, token) {
+  const entry = Object.entries(game.online?.tokens ?? {}).find(([, t]) => t === token)
+  return entry ? entry[0] : null
+}
+
+// Kiểm tra một máy xin vào phòng với tên này. connected là tập token đang kết
+// nối, để người lỡ tải lại trang (mất token) vẫn vào lại được bằng đúng tên cũ.
+// Trả về lý do không vào được, hoặc null nếu hợp lệ.
+export function checkJoin(game, name, token, connected) {
+  const clean = normalizeName(name)
+  if (!clean) return 'Tên không được để trống.'
+  const current = tokenName(game, token)
+  const lower = clean.toLocaleLowerCase('vi')
+  const taken = game.names.find((n) => n.toLocaleLowerCase('vi') === lower)
+  if (taken && taken !== current) {
+    if (current && game.phase !== 'players') return `Bạn đang chơi với tên "${current}".`
+    // Tên đã có người: chỉ cho nhận lại nếu máy giữ tên đó đã mất kết nối.
+    const owner = game.online.tokens[taken]
+    if (owner && connected.has(owner)) return `"${clean}" đã có người dùng, hãy nhập tên khác.`
+    return null
+  }
+  if (taken) return null
+  if (game.phase !== 'players') return 'Ván đã bắt đầu, chờ ván sau nhé.'
+  if (!current && game.names.length >= MAX_PLAYERS) return `Phòng đã đủ ${MAX_PLAYERS} người.`
+  return null
 }
 
 function applyAction(game, action) {
   switch (action.type) {
     case 'new':
-      return emptyGame(action.names, action.counts)
+      return emptyGame(action.names, action.counts, action.online)
+
+    // Đã qua checkJoin. Trùng tên (không phân biệt hoa thường) là nhận lại tên
+    // cũ; máy đã có tên mà gửi tên mới (lúc chưa bắt đầu) là đổi tên.
+    case 'onlineJoin': {
+      const name = normalizeName(action.name)
+      const lower = name.toLocaleLowerCase('vi')
+      const taken = game.names.find((n) => n.toLocaleLowerCase('vi') === lower)
+      const current = tokenName(game, action.token)
+      const tokens = { ...game.online.tokens }
+      if (taken) {
+        if (current && current !== taken) delete tokens[current]
+        tokens[taken] = action.token
+        const names = current && current !== taken && game.phase === 'players'
+          ? game.names.filter((n) => n !== current)
+          : game.names
+        return { ...game, names, online: { ...game.online, tokens } }
+      }
+      if (current) {
+        delete tokens[current]
+        tokens[name] = action.token
+        const names = game.names.map((n) => (n === current ? name : n))
+        return { ...game, names, online: { ...game.online, tokens } }
+      }
+      tokens[name] = action.token
+      return { ...game, names: [...game.names, name], online: { ...game.online, tokens } }
+    }
+
+    case 'onlineRemove': {
+      if (game.phase !== 'players') return game
+      const { [action.name]: _, ...tokens } = game.online.tokens
+      return {
+        ...game,
+        names: game.names.filter((n) => n !== action.name),
+        online: { ...game.online, tokens },
+      }
+    }
+
+    case 'markSeenBy': {
+      if (game.phase !== 'allSeen') return game
+      const players = game.players.map((p, i) => (i === action.index ? { ...p, seen: true } : p))
+      return { ...game, players }
+    }
 
     case 'addName': {
       if (validateNewName(action.name, game.names)) return game
@@ -381,7 +457,9 @@ export function gameReducer(game, action) {
   if (action.type === 'undo') {
     if (!canUndo(game)) return game
     const history = game.history.slice(0, -1)
-    return { ...game.history.at(-1).game, history }
+    // Giữ danh sách máy hiện tại: ai vừa vào lại phòng thì không bị mất kết nối.
+    const online = game.online ? { online: game.online } : {}
+    return { ...game.history.at(-1).game, ...online, history }
   }
 
   const next = applyAction(game, action)
