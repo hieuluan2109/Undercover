@@ -107,20 +107,20 @@ export function RoleRevealScreen({ game, dispatch }) {
       <p className="muted">là</p>
       <p className={`role-reveal ${player.role}`}>{ROLE_LABEL[player.role]}</p>
       {isMrWhite ? (
-        <p className="muted">Mr. White được đoán từ của dân 1 lần bằng cách tự gõ vào máy. Đoán đúng là thắng ngay.</p>
+        <p className="muted">Mũ Trắng được đoán từ của dân 1 lần bằng cách tự gõ vào máy. Đoán đúng là thắng ngay.</p>
       ) : null}
       {winner ? <p className="muted">Ván đã có kết quả.</p> : null}
 
       <div className="bottom-bar">
         <button className="btn primary big" onClick={() => dispatch({ type: 'afterRoleReveal' })}>
-          {isMrWhite ? 'Mr. White đoán từ' : winner ? 'Xem kết quả' : `Sang vòng ${game.round + 1}`}
+          {isMrWhite ? 'Mũ Trắng đoán từ' : winner ? 'Xem kết quả' : `Sang vòng ${game.round + 1}`}
         </button>
       </div>
     </section>
   )
 }
 
-// APP_FLOW 7.5: Mr. White tự gõ câu đoán, app tự so với từ của dân. Không ai
+// APP_FLOW 7.5: Mũ Trắng tự gõ câu đoán, app tự so với từ của dân. Không ai
 // phải phán đúng/sai nên không lộ ai biết từ nào.
 export function MrWhiteGuessScreen({ game, dispatch }) {
   const [guess, setGuess] = useState('')
@@ -144,7 +144,7 @@ export function MrWhiteGuessScreen({ game, dispatch }) {
           value={guess}
           onChange={(e) => setGuess(e.target.value)}
           placeholder="Nhập từ của dân"
-          aria-label="Câu đoán của Mr. White"
+          aria-label="Câu đoán của Mũ Trắng"
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="off"
@@ -210,7 +210,7 @@ export function EndScreen({ game, onReplay, onNewGame }) {
           <p className="word">{game.words.civilian}</p>
         </div>
         <div>
-          <p className="muted small">Từ của Undercover</p>
+          <p className="muted small">Từ của Mũ Đen</p>
           <p className="word">{game.words.undercover}</p>
         </div>
       </div>

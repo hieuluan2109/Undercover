@@ -19,6 +19,9 @@ Mới nhất ở trên. Chi tiết luồng xem [APP_FLOW.md](../APP_FLOW.md).
 
 ## Branch `main`
 
+### 2026-11-12: Đổi tên vai trên giao diện
+- Undercover → **Mũ Đen**, Mr. White → **Mũ Trắng** (mọi chữ hiển thị). Tên game "Undercover" và tên trong code (`ROLE.undercover`, `mrWhite`) giữ nguyên.
+
 ### 2026-11-12: Không lặp cặp từ đã chơi (`40e6c51`)
 - Bỏ chế độ "Lần lượt"; mỗi ván bốc ngẫu nhiên 1 cặp chưa chơi, hết kho thì bắt đầu lại.
 - Lưu cặp đã chơi theo chữ (`undercover:playedPairs:v1`). Màn chọn vai hiện "Còn N / tổng"; Cài đặt có nút đặt lại.

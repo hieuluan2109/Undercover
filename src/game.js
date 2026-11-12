@@ -15,14 +15,14 @@ export const ROLE = {
 
 export const ROLE_LABEL = {
   civilian: 'Dân thường',
-  undercover: 'Undercover',
-  mrWhite: 'Mr. White',
+  undercover: 'Mũ Đen',
+  mrWhite: 'Mũ Trắng',
 }
 
 export const WINNER_LABEL = {
   civilian: 'Dân thường thắng!',
   infiltrators: 'Kẻ xâm nhập thắng!',
-  mrWhite: 'Mr. White thắng!',
+  mrWhite: 'Mũ Trắng thắng!',
   stopped: 'Ván đã dừng',
 }
 
@@ -62,7 +62,7 @@ export function civilianCount(total, counts) {
 // Trả về lý do không bắt đầu được, hoặc null nếu hợp lệ.
 export function validateCounts(total, counts) {
   if (counts.undercover + counts.mrWhite < 1) {
-    return 'Cần ít nhất 1 Undercover hoặc 1 Mr. White.'
+    return 'Cần ít nhất 1 Mũ Đen hoặc 1 Mũ Trắng.'
   }
   if (civilianCount(total, counts) < 2) {
     return 'Cần ít nhất 2 Dân thường, nếu không ván sẽ kết thúc ngay.'
@@ -180,7 +180,7 @@ export function isAlive(player) {
   return player.outRound === null
 }
 
-// So câu đoán của Mr. White với từ của dân: bỏ khoảng trắng thừa, không phân
+// So câu đoán của Mũ Trắng với từ của dân: bỏ khoảng trắng thừa, không phân
 // biệt hoa thường. NFC để chữ có dấu gõ từ các bộ gõ khác nhau vẫn khớp.
 function normalizeGuess(text) {
   return normalizeName(text.normalize('NFC')).toLocaleLowerCase('vi')
@@ -207,7 +207,7 @@ function nextFirstSpeaker(players, order, settings, from) {
   return from
 }
 
-// Kiểm tra theo đúng thứ tự ở APP_FLOW 7.6 (trường hợp Mr. White đoán đúng
+// Kiểm tra theo đúng thứ tự ở APP_FLOW 7.6 (trường hợp Mũ Trắng đoán đúng
 // được xử lý riêng ở mrWhiteGuess).
 export function checkWinner(players) {
   let civilians = 0
@@ -358,7 +358,7 @@ function undoLabel(game, action, next) {
       return `loại ${game.players[action.index].name}`
     case 'afterRoleReveal':
     case 'afterMrWhiteWrong':
-      return next.phase === 'mrWhiteGuess' ? 'chuyển sang Mr. White đoán từ' : `sang vòng ${next.round}`
+      return next.phase === 'mrWhiteGuess' ? 'chuyển sang Mũ Trắng đoán từ' : `sang vòng ${next.round}`
     default:
       return null
   }
@@ -388,7 +388,7 @@ export function gameReducer(game, action) {
   if (next === game) return game
 
   // Đã kết thúc thì từ và vai đã lộ hết, không quay lại được nữa. Câu đoán của
-  // Mr. White cũng là mốc không lùi qua được, để không đoán lại nhiều lần.
+  // Mũ Trắng cũng là mốc không lùi qua được, để không đoán lại nhiều lần.
   if (next.phase === 'ended' || action.type === 'mrWhiteGuess') {
     const { history: _, ...rest } = next
     return rest

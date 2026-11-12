@@ -71,8 +71,8 @@ export function SettingsScreen({ settings, onChange, onBack }) {
           onChange={(e) => onChange({ ...settings, allowMrWhiteFirst: e.target.checked })}
         />
         <span>
-          Cho phép Mr. White nói đầu
-          <span className="muted small block">Mặc định tắt, để Mr. White nghe được ít nhất một gợi ý.</span>
+          Cho phép Mũ Trắng nói đầu
+          <span className="muted small block">Mặc định tắt, để Mũ Trắng nghe được ít nhất một gợi ý.</span>
         </span>
       </label>
 
@@ -118,10 +118,10 @@ const rulesContent = (
         <strong>Dân thường:</strong> đông nhất, cùng nhận một từ. Mục tiêu: loại hết kẻ xâm nhập.
       </li>
       <li>
-        <strong>Undercover:</strong> nhận một từ hơi khác. Phải tự đoán ra mình là Undercover và ẩn mình.
+        <strong>Mũ Đen:</strong> nhận một từ hơi khác. Phải tự đoán ra mình là Mũ Đen và ẩn mình.
       </li>
       <li>
-        <strong>Mr. White:</strong> không có từ. Sống sót đến cuối, hoặc đoán đúng từ của dân khi bị loại.
+        <strong>Mũ Trắng:</strong> không có từ. Sống sót đến cuối, hoặc đoán đúng từ của dân khi bị loại.
       </li>
     </ul>
     <p className="muted small">Lúc đầu không ai biết vai của mình, chỉ thấy từ.</p>
@@ -137,13 +137,13 @@ const rulesContent = (
     <h3>Thắng thua</h3>
     <ul>
       <li>
-        <strong>Dân thường</strong> thắng khi loại hết Undercover và Mr. White.
+        <strong>Dân thường</strong> thắng khi loại hết Mũ Đen và Mũ Trắng.
       </li>
       <li>
         <strong>Kẻ xâm nhập</strong> thắng khi chỉ còn 1 Dân thường.
       </li>
       <li>
-        <strong>Mr. White</strong> bị loại được đoán từ của dân 1 lần, đúng là thắng ngay. Mr. White tự gõ câu đoán, app tự chấm (không phân biệt hoa thường).
+        <strong>Mũ Trắng</strong> bị loại được đoán từ của dân 1 lần, đúng là thắng ngay. Mũ Trắng tự gõ câu đoán, app tự chấm (không phân biệt hoa thường).
       </li>
     </ul>
   </div>

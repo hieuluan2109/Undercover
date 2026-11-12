@@ -17,6 +17,9 @@ Mới nhất ở trên. Muốn đổi thì hỏi lại người dùng trước.
 - Người vào phòng giữa ván thì chờ ván sau, "Chơi lại" sẽ thêm họ vào.
 - Định danh mỗi máy bằng token lưu trong sessionStorage (mỗi tab là một người). Mất token thì nhập đúng tên cũ để vào lại, miễn là máy cũ giữ tên đó đã mất kết nối.
 
+## Tên gọi
+- Trên giao diện: Undercover = **Mũ Đen**, Mr. White = **Mũ Trắng** (2026-11-12). Tên game vẫn là "Undercover"; tài liệu luật và tên biến trong code giữ tên gốc.
+
 ## Cặp từ
 - **Chỉ có chế độ ngẫu nhiên không lặp**, đã bỏ chế độ "Lần lượt" (2026-11-12).
 - Cặp đã chơi được nhận diện bằng chữ của 2 từ, không theo vị trí. Một cặp được tính là đã chơi khi bấm "Bắt đầu".

@@ -2,6 +2,8 @@
 
 Tài liệu mô tả luồng ứng dụng web Undercover cho nhóm. Luật chơi xem tại [RULES.md](RULES.md).
 
+> **Tên gọi trong app:** vai **Undercover** hiển thị là **Mũ Đen**, vai **Mr. White** hiển thị là **Mũ Trắng**. Tài liệu này vẫn dùng tên gốc.
+
 > - **Phần 1 (mục 1–6):** chuẩn bị ván chơi: nhập người chơi → chia vai → từng người xem từ bí mật.
 > - **Phần 2 (mục 7):** diễn biến ván chơi: mô tả → bỏ phiếu → loại người → thắng/thua.
 > - **Cài đặt (mục 8).**

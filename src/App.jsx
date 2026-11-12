@@ -126,7 +126,7 @@ function GameMenu({ game, dispatch, onClose }) {
           ↶ Hoàn tác{undoLabel ? `: ${undoLabel}` : ''}
         </button>
         {!canUndo(game) ? (
-          <p className="muted small">Chỉ hoàn tác được trong lúc chơi, và không lùi qua câu đoán của Mr. White.</p>
+          <p className="muted small">Chỉ hoàn tác được trong lúc chơi, và không lùi qua câu đoán của Mũ Trắng.</p>
         ) : null}
         <button className="btn danger" onClick={() => setConfirm('end')}>
           ⏹ Kết thúc ván ngay

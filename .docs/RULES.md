@@ -2,6 +2,8 @@
 
 Luật cơ bản của trò chơi **Undercover** với 3 vai: **Dân thường**, **Undercover** và **Mr. White**.
 
+> **Tên gọi trong app:** vai **Undercover** hiển thị là **Mũ Đen**, vai **Mr. White** hiển thị là **Mũ Trắng**. Tài liệu này vẫn dùng tên gốc.
+
 > **Nguồn chính:** trang hướng dẫn chính thức của Yanstar Studio, nhà phát triển ứng dụng *Undercover™: Word Party Game* (xem mục [Nguồn tham khảo](#nguồn-tham-khảo)).
 > Phần nào **không** có trong luật chính thức đều được đánh dấu **[Luật nhóm]**.
 

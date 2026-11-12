@@ -4,7 +4,7 @@ export function SecretWord({ player }) {
     return (
       <div className="secret">
         <p className="secret-label">{player.name}</p>
-        <p className="secret-word">Bạn là Mr. White</p>
+        <p className="secret-word">Bạn là Mũ Trắng</p>
         <p className="muted">Bạn không có từ. Hãy nghe mọi người mô tả rồi ứng biến.</p>
       </div>
     )
@@ -13,7 +13,7 @@ export function SecretWord({ player }) {
     <div className="secret">
       <p className="secret-label">Từ của {player.name} là</p>
       <p className="secret-word">{player.word}</p>
-      <p className="muted">Bạn phải tự đoán mình là Dân thường hay Undercover.</p>
+      <p className="muted">Bạn phải tự đoán mình là Dân thường hay Mũ Đen.</p>
     </div>
   )
 }

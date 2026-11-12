@@ -183,14 +183,14 @@ export function RolesScreen({ game, dispatch, onStart }) {
       <p className="muted">{total} người chơi</p>
 
       <Stepper
-        label="Undercover"
+        label="Mũ Đen"
         hint="Nhận từ hơi khác"
         value={counts.undercover}
         onChange={setCount('undercover')}
         canIncrease={civilians > 0}
       />
       <Stepper
-        label="Mr. White"
+        label="Mũ Trắng"
         hint="Không có từ"
         value={counts.mrWhite}
         onChange={setCount('mrWhite')}
