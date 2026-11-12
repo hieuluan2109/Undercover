@@ -273,8 +273,8 @@ export function OnlineSeenScreen({ game, dispatch, room }) {
   )
 }
 
-// Mr. White (không phải host) đoán trên máy của mình. Máy kia hết pin hay mất
-// mạng thì host đưa máy mình cho Mr. White đoán.
+// Mũ Trắng (không phải host) đoán trên máy của mình. Máy kia hết pin hay mất
+// mạng thì host đưa máy mình cho Mũ Trắng đoán.
 export function OnlineWaitGuessScreen({ game, room, onGuessHere }) {
   const player = game.players[game.lastOut]
   const online = room.connected.has(game.online.tokens[player.name])

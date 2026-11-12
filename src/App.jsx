@@ -56,7 +56,7 @@ const PHASE_TITLE = {
   ended: 'Kết thúc',
 }
 
-// Chơi nhiều máy: Mr. White đoán trên máy mình, trừ khi host chọn cho đoán trên máy host.
+// Chơi nhiều máy: Mũ Trắng đoán trên máy mình, trừ khi host chọn cho đoán trên máy host.
 function OnlineGuessGate({ game, dispatch, room }) {
   const [here, setHere] = useState(false)
   // Host hoặc người host thêm bằng tay thì đoán ngay trên máy host.

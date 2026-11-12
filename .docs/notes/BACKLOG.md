@@ -3,7 +3,7 @@
 Mới nhất ở trên. Làm xong thì xóa ở đây và ghi vào [CHANGELOG.md](CHANGELOG.md).
 
 ## Đang chờ người dùng
-- **Chơi thử chế độ nhiều máy với team** trên link preview của branch `feature/online-peerjs`, rồi quyết định merge vào `main`.
+- **Chơi thử chế độ nhiều máy với team** (đã merge vào `main` ngày 2026-11-12, có trên bản production).
 - Kiểm tra trên điện thoại thật: giữ màn hình sáng (Safari iOS 16.4+, Chrome Android), nút "Gửi qua ứng dụng khác" và "Chép danh sách" ở màn chia sẻ nhóm.
 
 ## Việc tiếp theo (đã bàn, chưa làm)

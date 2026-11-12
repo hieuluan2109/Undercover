@@ -6,7 +6,7 @@
 //   { type: 'hello', token }   vừa kết nối, token định danh máy (sessionStorage)
 //   { type: 'join', name }     xin vào phòng / đổi tên / nhận lại tên cũ
 //   { type: 'seen' }           đã xem từ
-//   { type: 'guess', guess }   câu đoán của Mr. White
+//   { type: 'guess', guess }   câu đoán của Mũ Trắng
 //   { type: 'ping' }
 // Tin nhắn host → máy người chơi:
 //   { type: 'view', view }     trạng thái mới

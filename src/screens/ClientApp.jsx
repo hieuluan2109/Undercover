@@ -141,7 +141,7 @@ function RoleRevealView({ view }) {
       <p className="big-name">{name === view.myName ? `${name} (bạn)` : name}</p>
       <p className="muted">là</p>
       <p className={`role-reveal ${role}`}>{ROLE_LABEL[role]}</p>
-      {role === ROLE.mrWhite ? <p className="muted">Mr. White được đoán từ của dân 1 lần.</p> : null}
+      {role === ROLE.mrWhite ? <p className="muted">Mũ Trắng được đoán từ của dân 1 lần.</p> : null}
     </section>
   )
 }
@@ -156,7 +156,7 @@ function GuessView({ view, send }) {
       <section className="screen center">
         <p className="big-icon">🤔</p>
         <h1>{view.lastOut.name} đang đoán từ</h1>
-        <p className="muted">Chờ Mr. White gõ câu đoán…</p>
+        <p className="muted">Chờ Mũ Trắng gõ câu đoán…</p>
       </section>
     )
   }
@@ -164,7 +164,7 @@ function GuessView({ view, send }) {
   return (
     <section className="screen center">
       <p className="big-icon">🤔</p>
-      <h1>Bạn là Mr. White, hãy đoán từ của dân</h1>
+      <h1>Bạn là Mũ Trắng, hãy đoán từ của dân</h1>
       <form
         className="guess-form"
         onSubmit={(e) => {
@@ -176,7 +176,7 @@ function GuessView({ view, send }) {
           value={guess}
           onChange={(e) => setGuess(e.target.value)}
           placeholder="Nhập từ của dân"
-          aria-label="Câu đoán của Mr. White"
+          aria-label="Câu đoán của Mũ Trắng"
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="off"

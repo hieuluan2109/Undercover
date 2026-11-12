@@ -19,7 +19,7 @@ Web app chơi Undercover cho nhóm, chạy trên trình duyệt điện thoại.
 - `src/groups.js`: nhóm người chơi đã lưu.
 - `src/words.js`: kho cặp từ, thêm cặp mới vào cuối.
 - `src/screens/`, `src/components/`: giao diện.
-- `src/online/` (chỉ trên branch `feature/online-peerjs`): chơi nhiều máy qua PeerJS.
+- `src/online/`: chơi nhiều máy qua PeerJS (máy host giữ ván, gửi cho mỗi máy phần được thấy).
 
 ## Quy ước
 - Trao đổi với người dùng bằng **tiếng Việt**. Chữ trên giao diện và comment trong code cũng bằng tiếng Việt; commit message bằng tiếng Anh.

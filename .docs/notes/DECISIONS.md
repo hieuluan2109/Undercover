@@ -8,7 +8,7 @@ Mới nhất ở trên. Muốn đổi thì hỏi lại người dùng trước.
 - Trao đổi bằng tiếng Việt.
 - **Chưa dùng subagent** (2026-11-12). Không làm subagent để code, vì nó phải đọc lại ngữ cảnh từ đầu và tốn token hơn. Kiểm tra chất lượng thì dùng `/code-review` trước khi merge; khi cần mới tạo subagent reviewer (chỉ đọc).
 
-## Chơi nhiều máy (branch `feature/online-peerjs`)
+## Chơi nhiều máy
 - **Dùng PeerJS (WebRTC), không dùng backend** (2026-11-12). Không cần tài khoản dịch vụ, và từ của từng người được gửi riêng tới đúng máy đó.
   - **Không chuyển sang Next.js / WebSocket trên Vercel**: Next.js không làm kết nối tốt hơn. WebSocket trên Vercel bị cắt sau 5 phút (gói Hobby) và cần Redis để đồng bộ phòng giữa các instance.
 - **Thảo luận và bỏ phiếu diễn ra ngoài đời; host loại người bằng tay.** Bỏ phiếu trong app để sau.

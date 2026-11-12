@@ -2,19 +2,19 @@
 
 Mới nhất ở trên. Chi tiết luồng xem [APP_FLOW.md](../APP_FLOW.md).
 
-## Branch `feature/online-peerjs` (thử nghiệm, chưa merge vào `main`)
+## Chơi nhiều máy (làm trên branch `feature/online-peerjs`, đã rebase và merge vào `main` ngày 2026-11-12)
 
-### 2026-11-12: Vào phòng bằng mã, host thêm người bằng tay
+### 2026-11-12: Vào phòng bằng mã, host thêm người bằng tay (`2c24e50`)
 - Nút "Chơi nhiều máy" mở hộp chọn: tạo phòng, hoặc gõ mã phòng để vào.
 - Host thêm người không có máy (token `manual:…`, dùng chung máy host để xem từ và đoán từ). Máy của người đó vào sau bằng đúng tên thì nhận lại chỗ.
 
-### 2026-11-12: Người đến muộn chờ ván sau, giữ màn hình sáng (`7f52bdc`)
+### 2026-11-12: Người đến muộn chờ ván sau, giữ màn hình sáng (`1f15d53`)
 - Quét QR khi ván đang chơi → vào danh sách chờ; "Chơi lại" thêm họ vào phòng chờ. Quét lúc host đang chọn vai → vào thẳng danh sách.
 - Chế độ nhiều máy luôn hiện cả thứ tự nói.
 - Máy người chơi nhớ tên đã dùng (`undercover:lastName:v1`).
 - Screen Wake Lock cho máy host (đang trong ván) và máy người chơi (`src/online/useWakeLock.js`).
 
-### 2026-11-12: Chơi nhiều máy qua PeerJS (`d646df0`)
+### 2026-11-12: Chơi nhiều máy qua PeerJS (`2a8b64b`)
 - Host mở phòng (mã 5 ký tự + QR, link `?room=MÃ`), người chơi quét → nhập tên (trùng tên thì nhập lại, mất kết nối thì nhận lại tên cũ).
 - Mỗi người xem từ trên máy mình; host điều khiển ván; Mr. White đoán trên máy mình.
 - Host chỉ gửi cho mỗi máy phần nó được thấy (`viewFor` trong `src/online/protocol.js`).
