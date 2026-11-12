@@ -6,6 +6,7 @@ Mới nhất ở trên. Muốn đổi thì hỏi lại người dùng trước.
 - **Commit bằng tài khoản Luan Nguyen, không có `Co-Authored-By: Claude`** (2026-11-12). Commit có tác giả Claude thì Vercel không tự build.
 - Tính năng lớn: tìm hiểu → gửi kế hoạch → người dùng chốt → mới làm. Tính năng thử nghiệm làm trên branch riêng, dùng link preview của Vercel để thử.
 - Trao đổi bằng tiếng Việt.
+- **Chưa dùng subagent** (2026-11-12). Không làm subagent để code, vì nó phải đọc lại ngữ cảnh từ đầu và tốn token hơn. Kiểm tra chất lượng thì dùng `/code-review` trước khi merge; khi cần mới tạo subagent reviewer (chỉ đọc).
 
 ## Chơi nhiều máy (branch `feature/online-peerjs`)
 - **Dùng PeerJS (WebRTC), không dùng backend** (2026-11-12). Không cần tài khoản dịch vụ, và từ của từng người được gửi riêng tới đúng máy đó.
@@ -15,6 +16,7 @@ Mới nhất ở trên. Muốn đổi thì hỏi lại người dùng trước.
 - Vẫn giữ chế độ một máy chuyền tay; chế độ nhiều máy là lựa chọn thêm.
 - Chế độ nhiều máy luôn hiện cả thứ tự nói.
 - Người vào phòng giữa ván thì chờ ván sau, "Chơi lại" sẽ thêm họ vào.
+- Host được thêm người bằng tay; người đó dùng chung máy host. Thêm tay mà trùng tên thì báo lỗi, không thay chỗ người đã có.
 - Định danh mỗi máy bằng token lưu trong sessionStorage (mỗi tab là một người). Mất token thì nhập đúng tên cũ để vào lại, miễn là máy cũ giữ tên đó đã mất kết nối.
 
 ## Tên gọi

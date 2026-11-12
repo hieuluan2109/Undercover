@@ -21,9 +21,11 @@ export const TIMEOUT_MS = 15000
 // Bỏ các ký tự dễ nhầm (0/O, 1/I) để đọc mã phòng cho nhau dễ hơn.
 const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
 
+export const ROOM_CODE_LENGTH = 5
+
 export function newRoomCode() {
   let code = ''
-  for (let i = 0; i < 5; i++) code += CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)]
+  for (let i = 0; i < ROOM_CODE_LENGTH; i++) code += CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)]
   return code
 }
 

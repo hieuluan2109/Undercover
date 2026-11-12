@@ -4,6 +4,10 @@ Mới nhất ở trên. Chi tiết luồng xem [APP_FLOW.md](../APP_FLOW.md).
 
 ## Branch `feature/online-peerjs` (thử nghiệm, chưa merge vào `main`)
 
+### 2026-11-12: Vào phòng bằng mã, host thêm người bằng tay
+- Nút "Chơi nhiều máy" mở hộp chọn: tạo phòng, hoặc gõ mã phòng để vào.
+- Host thêm người không có máy (token `manual:…`, dùng chung máy host để xem từ và đoán từ). Máy của người đó vào sau bằng đúng tên thì nhận lại chỗ.
+
 ### 2026-11-12: Người đến muộn chờ ván sau, giữ màn hình sáng (`7f52bdc`)
 - Quét QR khi ván đang chơi → vào danh sách chờ; "Chơi lại" thêm họ vào phòng chờ. Quét lúc host đang chọn vai → vào thẳng danh sách.
 - Chế độ nhiều máy luôn hiện cả thứ tự nói.

@@ -312,8 +312,11 @@ Phần 1 và Phần 2 đều không còn câu hỏi nào.
 Mỗi người dùng điện thoại của mình, không cần chuyền máy. Các máy kết nối trực tiếp với nhau qua **PeerJS (WebRTC)**. Máy chủ PeerJS miễn phí chỉ dùng để các máy tìm thấy nhau; dữ liệu ván chơi đi thẳng giữa các máy. Vẫn không có backend riêng.
 
 ### 10.1. Luồng
-1. Host bấm **"Chơi nhiều máy"** ở màn hình chính → app mở phòng với **mã 5 ký tự** và **mã QR** (link `?room=MÃ`).
-2. Host nhập tên mình (host cũng là người chơi). Người khác quét QR → nhập tên → vào phòng.
+1. Bấm **"Chơi nhiều máy"** ở màn hình chính → chọn:
+   - **"Tạo phòng mới (làm host)"** → app mở phòng với **mã 5 ký tự** và **mã QR** (link `?room=MÃ`).
+   - Hoặc **gõ mã phòng** rồi bấm "Vào" (cho máy không quét được QR). Không phân biệt chữ hoa, chữ thường.
+2. Host nhập tên mình (host cũng là người chơi). Người khác quét QR (hoặc gõ mã) → nhập tên → vào phòng.
+   - **Host thêm người bằng tay** ("Thêm người không có máy"), cho người không có điện thoại hoặc máy không kết nối được. Người này hiện biểu tượng 📵 và **dùng chung máy host**: xem từ bằng nút "Xem từ" ở màn xem từ (có bước xác nhận "Đưa máy cho…"), và đoán từ trên máy host nếu là Mr. White. Nếu máy của họ vào phòng sau đó bằng đúng tên này thì nhận lại chỗ.
    - **Trùng tên** (không phân biệt hoa thường) với người đang kết nối → báo lỗi, nhập tên khác.
    - Trùng tên với người **đã mất kết nối** → coi là người đó vào lại.
    - Máy nhớ tên đã dùng lần trước, lần sau quét QR là tên đã điền sẵn.

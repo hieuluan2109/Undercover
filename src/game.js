@@ -245,6 +245,25 @@ export function emptyGame(names = [], counts = null, online = null) {
 
 export const HOST_TOKEN = 'host'
 
+// Người host thêm bằng tay (không có máy hoặc máy không kết nối được): dùng
+// chung máy host. Sau này máy của họ vào phòng bằng đúng tên đó thì nhận lại
+// chỗ, vì token này không bao giờ "đang kết nối".
+const MANUAL_PREFIX = 'manual:'
+
+export function newManualToken() {
+  return MANUAL_PREFIX + Math.random().toString(36).slice(2, 10)
+}
+
+export function isManualToken(token) {
+  return typeof token === 'string' && token.startsWith(MANUAL_PREFIX)
+}
+
+// Người chơi dùng máy host: chính host, hoặc người được host thêm bằng tay.
+export function usesHostDevice(game, name) {
+  const token = game.online?.tokens[name]
+  return token === HOST_TOKEN || isManualToken(token)
+}
+
 export function tokenName(game, token) {
   const entry = Object.entries(game.online?.tokens ?? {}).find(([, t]) => t === token)
   return entry ? entry[0] : null

@@ -1,7 +1,19 @@
 import QRCode from 'qrcode'
 import { useEffect, useState } from 'react'
+import { ConfirmDialog, Dialog } from '../components/Dialog.jsx'
 import { MyWord } from '../components/MyWord.jsx'
-import { HOST_TOKEN, MAX_PLAYERS, MIN_PLAYERS, checkJoin, normalizeName, tokenName } from '../game.js'
+import { SecretWord } from '../components/SecretWord.jsx'
+import {
+  HOST_TOKEN,
+  MAX_PLAYERS,
+  MIN_PLAYERS,
+  checkJoin,
+  isManualToken,
+  newManualToken,
+  normalizeName,
+  tokenName,
+  validateNewName,
+} from '../game.js'
 import { MAX_NAME_LENGTH } from '../groups.js'
 import { joinUrl } from '../online/protocol.js'
 
@@ -26,6 +38,57 @@ export function RoomQr({ room }) {
       <p className="room-code">{room}</p>
       <p className="muted small">Quét mã bằng camera, hoặc mở {url}</p>
     </div>
+  )
+}
+
+// Chấm xanh = máy đang kết nối, 📵 = người host thêm bằng tay (dùng máy host).
+function DeviceDot({ token, room }) {
+  if (isManualToken(token)) return <span title="Dùng máy host">📵</span>
+  return <i className={room.connected.has(token) ? 'dot on' : 'dot'} />
+}
+
+// Host thêm người không có máy (hoặc máy không kết nối được).
+function AddManualForm({ game, dispatch, room }) {
+  const [name, setName] = useState('')
+  const [error, setError] = useState(null)
+
+  const add = (e) => {
+    e.preventDefault()
+    const token = newManualToken()
+    // Thêm tay thì không "nhận lại" tên của ai: trùng tên là báo lỗi luôn.
+    const problem =
+      validateNewName(name, Object.keys(game.online.tokens)) ?? checkJoin(game, name, token, room.connected)
+    if (problem) {
+      setError(problem)
+      return
+    }
+    dispatch({ type: 'onlineJoin', name, token })
+    setName('')
+  }
+
+  return (
+    <>
+      <h3>Thêm người không có máy</h3>
+      <form className="add-form" onSubmit={add}>
+        <input
+          value={name}
+          onChange={(e) => {
+            setName(e.target.value)
+            setError(null)
+          }}
+          placeholder="Tên người chơi"
+          maxLength={MAX_NAME_LENGTH}
+          enterKeyHint="done"
+        />
+        <button className="btn" type="submit" disabled={!normalizeName(name)}>
+          Thêm
+        </button>
+      </form>
+      {error ? <p className="error">{error}</p> : null}
+      <p className="muted small">
+        Người này xem từ trên máy host. Nếu máy của họ vào được sau, nhập đúng tên này là nhận lại chỗ.
+      </p>
+    </>
   )
 }
 
@@ -87,7 +150,7 @@ export function OnlineLobbyScreen({ game, dispatch, room }) {
           return (
             <li key={n}>
               <span>
-                <i className={room.connected.has(token) ? 'dot on' : 'dot'} /> {n}
+                <DeviceDot token={token} room={room} /> {n}
                 {isHost ? ' (bạn)' : ''}
               </span>
               {isHost ? null : (
@@ -107,6 +170,8 @@ export function OnlineLobbyScreen({ game, dispatch, room }) {
       </ol>
       <p className="muted small">Thứ tự trong danh sách là thứ tự vào phòng.</p>
 
+      {hostName !== null ? <AddManualForm game={game} dispatch={dispatch} room={room} /> : null}
+
       <div className="bottom-bar">
         <button className="btn primary big" disabled={!canContinue} onClick={() => dispatch({ type: 'toRoles' })}>
           Tiếp tục
@@ -116,8 +181,34 @@ export function OnlineLobbyScreen({ game, dispatch, room }) {
   )
 }
 
+// Người dùng chung máy host xem từ: xác nhận đưa máy → hiện từ → ẩn đi.
+function ManualReveal({ player, onSeen, onClose }) {
+  const [open, setOpen] = useState(false)
+
+  if (!open) {
+    return (
+      <ConfirmDialog
+        title={`Đưa máy cho ${player.name}`}
+        message={`Chỉ ${player.name} được nhìn màn hình. Những người khác quay đi.`}
+        confirmLabel={`Tôi là ${player.name}`}
+        onCancel={onClose}
+        onConfirm={() => setOpen(true)}
+      />
+    )
+  }
+  return (
+    <Dialog onClose={onSeen}>
+      <SecretWord player={player} />
+      <button className="btn primary" onClick={onSeen}>
+        Đã nhớ, ẩn đi
+      </button>
+    </Dialog>
+  )
+}
+
 // Sau khi chia vai: ai cũng xem từ trên máy mình, host thấy ai đã xem.
 export function OnlineSeenScreen({ game, dispatch, room }) {
+  const [revealing, setRevealing] = useState(null) // chỉ số người dùng chung máy host
   const hostName = tokenName(game, HOST_TOKEN)
   const hostIndex = game.players.findIndex((p) => p.name === hostName)
   const me = game.players[hostIndex]
@@ -143,14 +234,23 @@ export function OnlineSeenScreen({ game, dispatch, room }) {
         Đã xem {seenCount} / {game.players.length}
       </h3>
       <ul className="out-list">
-        {game.players.map((p) => (
-          <li key={p.name}>
-            <span>
-              <i className={room.connected.has(game.online.tokens[p.name]) ? 'dot on' : 'dot'} /> {p.name}
-            </span>
-            <span className="muted small">{p.seen ? '✅ đã xem' : 'chưa xem'}</span>
-          </li>
-        ))}
+        {game.players.map((p, i) => {
+          const token = game.online.tokens[p.name]
+          return (
+            <li key={p.name}>
+              <span>
+                <DeviceDot token={token} room={room} /> {p.name}
+              </span>
+              {isManualToken(token) ? (
+                <button className="btn small-btn" onClick={() => setRevealing(i)}>
+                  {p.seen ? 'Xem lại từ' : 'Xem từ'}
+                </button>
+              ) : (
+                <span className="muted small">{p.seen ? '✅ đã xem' : 'chưa xem'}</span>
+              )}
+            </li>
+          )
+        })}
       </ul>
 
       <div className="bottom-bar">
@@ -158,6 +258,17 @@ export function OnlineSeenScreen({ game, dispatch, room }) {
           {seenCount === game.players.length ? 'Bắt đầu chơi' : 'Bắt đầu luôn'}
         </button>
       </div>
+
+      {revealing !== null ? (
+        <ManualReveal
+          player={game.players[revealing]}
+          onClose={() => setRevealing(null)}
+          onSeen={() => {
+            dispatch({ type: 'markSeenBy', index: revealing })
+            setRevealing(null)
+          }}
+        />
+      ) : null}
     </section>
   )
 }
